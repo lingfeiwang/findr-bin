@@ -103,9 +103,7 @@ Makefile.flags:
 	$(LD) -Wl,-rpath="$$$$ORIGIN" $$ldflags --shared -o $(TMP_FILE) &> /dev/null && \
 	ldflags="-Wl,-rpath=\""'$$$$'"ORIGIN\" $(addsuffix \",$(addprefix -Wl$(COMMA)-rpath=\",$(DIR_BUILD_LIB))) $$ldflags $(addprefix -L,$(DIR_BUILD_LIB))"; \
 	echo "CFLAGS=$$cflags" > $@ && \
-	tcyg=$$(uname | grep -io "cygwin"); \
-	if [ -n "$$tcyg" ]; then ldflags="$$ldflags -L. -llib$(LIB_NAME)"; else ldflags="$$ldflags -l$(LIB_NAME)"; fi; \
-	echo "LDFLAGS=$$ldflags -lgsl -lgslcblas" >> $@
+	echo "LDFLAGS=$$ldflags -L. -l$(LIB_NAME) -lgsl -lgslcblas" >> $@
 	$(RM) $(TMP_FILE)
 
 ifdef INCLUDE_MAKEFILE_AFTER

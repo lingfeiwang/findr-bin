@@ -61,10 +61,10 @@ void checkversion()
 //Display usage info.
 void usage(FILE* fp,const char* binpath)
 {
-	fprintf(fp,"Usage: %s loglv rs n_th method [method-args...]%s",binpath,_NEWLINE_);
+	fprintf(fp,"Usage: %s loglv rs nth method [method-args...]%s",binpath,_NEWLINE_);
 	fprintf(fp,"\tloglv:\tLog level, 0 for automatic (warnings + errors)%s",_NEWLINE_);
 	fprintf(fp,"\trs:\tInitial random seed. 0 for using current time.%s",_NEWLINE_);
-	fprintf(fp,"\tn_th:\tMaximum number of parallel threads, 0 for automatic%s",_NEWLINE_);
+	fprintf(fp,"\tnth:\tMaximum number of parallel threads, 0 for automatic%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
 	fprintf(fp,"For each method, look up the function of the same name in the library headers for usage.%s",_NEWLINE_);
 	fprintf(fp,"Supports the following methods:%s",_NEWLINE_);
@@ -170,8 +170,12 @@ int bin_pij_rank_func(int argc,const char* argv[],int (*func)(const MATRIXF*,con
 	ng=(size_t)atoi(argv[2]);
 	nt=(size_t)atoi(argv[3]);
 	ns=(size_t)atoi(argv[4]);
+	if(!(ng&&nt&&ns))
+		return -1;
 	f_p=argv[5];
 	nodiag=(char)atoi(argv[6]);
+	if((nodiag!=0)&&(nodiag!=1))
+		return -1;
 	LOG(8,"%s started.",funcname)
 	
 	//Memory allocation
@@ -256,7 +260,11 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*
 	f_p2c=argv[8];
 	f_p3=argv[9];
 	nv=(size_t)atoi(argv[10])+1;
+	if(!(ng&&nt&&ns&&(nv-1)))
+		return -1;
 	nodiag=(char)atoi(argv[11]);
+	if((nodiag!=0)&&(nodiag!=1))
+		return -1;
 	LOG(8,"%s started.",funcname)
 	
 	//Memory allocation

@@ -9,7 +9,7 @@ Findr obtains much higher accuracy and faster speed than existing programs [1].
 This is due to the analytical and implementational advances. Findr library can
 be downloaded from [2].
 
-This package is binary interface of Findr library, downloadable from [3]. It
+This package is the binary interface of Findr library, downloadable from [3]. It
 requires recent builds of GCC, GNU make, and GNU Scientific Library (GSL). It
 also requires Findr library to be pre-installed. The python interface and R
 package are also provided for Findr, downloadable from [4] and [5] respectively. 
