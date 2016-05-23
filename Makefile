@@ -12,6 +12,8 @@ URL_BIN="https://github.com/lingfeiwang/findr-bin"
 URL_PYTHON="https://github.com/lingfeiwang/findr-python"
 URL_R="https://github.com/lingfeiwang/findr-R"
 URL_DOC="https://github.com/lingfeiwang/findr/blob/master/doc.pdf"
+URL_LIB_REL="$(URL_LIB)/releases"
+URL_BIN_REL="$(URL_BIN)/releases"
 VERSION1=0
 VERSION2=1
 VERSION3=0
@@ -38,7 +40,7 @@ DIR_INSTALL_PREFIX=$(PREFIX)
 DIR_BUILD_LIB_PREFIX=$(PREFIX)
 DIR_INSTALL_BIN=$(DIR_INSTALL_PREFIX)/bin
 DIR_BUILD_LIB=$(addsuffix /lib,$(DIR_BUILD_LIB_PREFIX)) ../$(DIR_LIB)/$(DIR_BUILD)
-DIR_BUILD_INC=$(addsuffix /include/$(LIB_NAME),$(DIR_BUILD_LIB_PREFIX)) ../$(DIR_INC)/$(DIR_SRC)
+DIR_BUILD_INC=$(addsuffix /include/$(LIB_NAME),$(DIR_BUILD_LIB_PREFIX)) $(addsuffix /include,$(DIR_INSTALL_PREFIX)) ../$(DIR_INC)/$(DIR_SRC)
 #ifdef DIR_SRC_GSL
 #LDFLAGS:=$(LDFLAGS) -Wl,--whole-archive $(DIR_SRC_GSL)/.libs/libgsl.a $(DIR_SRC_GSL)/cblas/.libs/libgslcblas.a -Wl,--no-whole-archive
 #CFLAGS:=$(CFLAGS) -I$(DIR_SRC_GSL)
@@ -101,9 +103,9 @@ Makefile.flags:
 	ldflags="-Wl,--no-as-needed $$ldflags"; \
 	echo "Testing -Wl,-rpath" ; \
 	$(LD) -Wl,-rpath="$$$$ORIGIN" $$ldflags --shared -o $(TMP_FILE) &> /dev/null && \
-	ldflags="-Wl,-rpath=\""'$$$$'"ORIGIN\" $(addsuffix \",$(addprefix -Wl$(COMMA)-rpath=\",$(DIR_BUILD_LIB))) $$ldflags $(addprefix -L,$(DIR_BUILD_LIB))"; \
+	ldflags="-Wl,-rpath=\""'$$$$'"ORIGIN\" $(addsuffix \",$(addprefix -Wl$(COMMA)-rpath=\",$(DIR_BUILD_LIB))) $$ldflags"; \
 	echo "CFLAGS=$$cflags" > $@ && \
-	echo "LDFLAGS=$$ldflags -L. -l$(LIB_NAME) -lgsl -lgslcblas" >> $@
+	echo "LDFLAGS=$$ldflags $(addprefix -L,$(DIR_BUILD_LIB)) -L. -l$(LIB_NAME) -lgsl -lgslcblas" >> $@
 	$(RM) $(TMP_FILE)
 
 ifdef INCLUDE_MAKEFILE_AFTER
