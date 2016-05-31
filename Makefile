@@ -16,7 +16,7 @@ URL_LIB_REL="$(URL_LIB)/releases"
 URL_BIN_REL="$(URL_BIN)/releases"
 VERSION1=0
 VERSION2=1
-VERSION3=0
+VERSION3=1
 LICENSE=AGPL-3
 LICENSE_FULL="GNU Affero General Public License, Version 3"
 LICENSE_URL="https://www.gnu.org/licenses/agpl-3.0"
@@ -94,7 +94,7 @@ Makefile.flags:
 	gver=$$($(CC) --version | grep -o gcc) ; \
 	if ! [ -n "$$gver" ]; then echo "Invalid GCC version. Please download the latest GCC."; exit 1; fi
 	# Testing test method
-	cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=gnu99 -pedantic-errors $(addprefix -I,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
+	@cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
 	ldflags="$(LDFLAGS) -fopenmp -lc -lm"; \
 	$(LD) $$ldflags -lc --shared -o $(TMP_FILE) &> /dev/null || \
 	( echo "Linking with default flags failed."; exit 1; ) ; \
