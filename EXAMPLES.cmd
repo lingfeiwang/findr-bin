@@ -1,0 +1,5 @@
+rem Calculate probability of pairwise correlation without genotype data, and with extensible log
+findr 12 0 0 pij_rank_a data/geuvadis/dt.dat data/geuvadis/dt2.dat 10 3000 360 data/geuvadis/dp.dat 0
+rem Calculate probability of pairwise correlation with genotype data, and with default log
+findr 0 0 0 pijs_gassist_a data/geuvadis/dg.dat data/geuvadis/dt.dat data/geuvadis/dt2.dat 10 3000 360 data/geuvadis/dp1.dat data/geuvadis/dp2b.dat data/geuvadis/dp2c.dat data/geuvadis/dp3.dat 2 0
+

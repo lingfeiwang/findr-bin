@@ -14,9 +14,10 @@ URL_R="https://github.com/lingfeiwang/findr-R"
 URL_DOC="https://github.com/lingfeiwang/findr/blob/master/doc.pdf"
 URL_LIB_REL="$(URL_LIB)/releases"
 URL_BIN_REL="$(URL_BIN)/releases"
+URL_R_REL="$(URL_R)/releases"
 VERSION1=0
-VERSION2=1
-VERSION3=1
+VERSION2=2
+VERSION3=0
 LICENSE=AGPL-3
 LICENSE_FULL="GNU Affero General Public License, Version 3"
 LICENSE_URL="https://www.gnu.org/licenses/agpl-3.0"
@@ -41,19 +42,11 @@ DIR_BUILD_LIB_PREFIX=$(PREFIX)
 DIR_INSTALL_BIN=$(DIR_INSTALL_PREFIX)/bin
 DIR_BUILD_LIB=$(addsuffix /lib,$(DIR_BUILD_LIB_PREFIX)) ../$(DIR_LIB)/$(DIR_BUILD)
 DIR_BUILD_INC=$(addsuffix /include/$(LIB_NAME),$(DIR_BUILD_LIB_PREFIX)) $(addsuffix /include,$(DIR_INSTALL_PREFIX)) ../$(DIR_INC)/$(DIR_SRC)
-#ifdef DIR_SRC_GSL
-#LDFLAGS:=$(LDFLAGS) -Wl,--whole-archive $(DIR_SRC_GSL)/.libs/libgsl.a $(DIR_SRC_GSL)/cblas/.libs/libgslcblas.a -Wl,--no-whole-archive
-#CFLAGS:=$(CFLAGS) -I$(DIR_SRC_GSL)
-#else
-#LDFLAGS:=$(LDFLAGS) -lgsl -lgslcblas
-#endif
 CC=gcc
 LD=gcc
 #INSTALL=install
 COMMA=,
 OPTFLAGS=-O3 -DNDEBUG=1 -DGSL_RANGE_CHECK_OFF=1 -DHAVE_INLINE=1
-#CFLAGS:=$(CFLAGS) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=gnu99 -pedantic-errors $(addprefix -I,$(DIR_BUILD_INC)) $(OPTFLAGS)
-#LDFLAGS:=$(LDFLAGS) -fopenmp -lc -lm $(addprefix -L,$(DIR_BUILD_LIB)) -l$(LIB_NAME) -Wl,-rpath="$$ORIGIN" $(addsuffix ",$(addprefix -Wl$(COMMA)-rpath=",$(DIR_BUILD_LIB)))
 
 BIN_C=$(wildcard $(DIR_SRC)/*.c)
 BIN_PRODUCT=$(addsuffix .o,$(basename $(BIN_C)))
@@ -91,11 +84,16 @@ TMP_FILE=.tmp
 Makefile.flags:
 	# Testing gcc
 	$(CC) --version &> /dev/null || ( echo "GCC not found. Please download the latest GCC or specify its location in CC variable in Makefile."; exit 1; )
-	gver=$$($(CC) --version | grep -o gcc) ; \
+	gver=$$($(CC) --version | grep -io gcc) ; \
 	if ! [ -n "$$gver" ]; then echo "Invalid GCC version. Please download the latest GCC."; exit 1; fi
-	# Testing test method
 	@cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
-	ldflags="$(LDFLAGS) -fopenmp -lc -lm"; \
+	ldflags="$(LDFLAGS) -fopenmp -lm"; \
+	echo "Testing Windows"; \
+	gver=$$($(CC) --version) ; \
+	t1=$$(echo "$$gver" | grep -io "MSYS2"); \
+	t2=$$(echo "$$gver" | grep -io "mingw"); \
+	if ! [ -n "$$t1$$t2" ]; then ldflags="$$ldflags -lc"; fi; \
+	echo "Testing test method"; \
 	$(LD) $$ldflags -lc --shared -o $(TMP_FILE) &> /dev/null || \
 	( echo "Linking with default flags failed."; exit 1; ) ; \
 	echo "Testing -Wl,--no-as-needed" ; \
