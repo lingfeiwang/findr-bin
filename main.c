@@ -69,9 +69,9 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"For each method, look up the function of the same name in the library headers for usage.%s",_NEWLINE_);
 	fprintf(fp,"Supports the following methods:%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-	fprintf(fp,"pij_gassist_a: invokes function pijs_gassist_a in library%s",_NEWLINE_);
-	fprintf(fp,"pij_gassist_tot: invokes function pijs_gassist_tot in library%s",_NEWLINE_);
-	fprintf(fp,"Usage: pij_gassist_??? fg ft ft2 nt nt2 ns fp na nodiag%s",_NEWLINE_);
+	fprintf(fp,"pij_gassist: invokes function pij_gassist in library and provides recommended causal inference of regulatory relations%s",_NEWLINE_);
+	fprintf(fp,"pij_gassist_trad: invokes function pij_gassist_trad in library and performs traditional causal inference test. WARNING: This is not and is not intended as a loyal reimplementation of Trigger R package.%s",_NEWLINE_);
+	fprintf(fp,"Usage: pij_gassist* fg ft ft2 nt nt2 ns fp na nodiag memlimit%s",_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
 	fprintf(fp,"\tfg:\tPath of input file containing genotype data for E(A). Data matrix size: (nt,ns).%s",_NEWLINE_);
 	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Data matrix size: (nt,ns).%s",_NEWLINE_);
@@ -79,13 +79,13 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tnt:\tNumber of A's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tnt2:\tNumber of B's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tns:\tNumber of samples as integer%s",_NEWLINE_);
-	fprintf(fp,"\tfp:\tPath of output file for probability of recommended test combinations. Data matrix size: (nt,nt2).%s",_NEWLINE_);
+	fprintf(fp,"\tfp:\tPath of output file for inferred posterior probability of the test of interest, either the recommended test by pij_gassist, or the traditional test by pij_gassist_trad. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tna:\tNumber of allleles for the species considered, = n_v-1.%s",_NEWLINE_);
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
+	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-	fprintf(fp,"pijs_gassist_a: invokes function pijs_gassist_a in library%s",_NEWLINE_);
-	fprintf(fp,"pijs_gassist_tot: invokes function pijs_gassist_tot in library%s",_NEWLINE_);
-	fprintf(fp,"Usage: pijs_gassist_??? fg ft ft2 nt nt2 ns fp1 fp2 fp3 fp4 fp5 na nodiag%s",_NEWLINE_);
+	fprintf(fp,"pijs_gassist: invokes function pijs_gassist in library%s",_NEWLINE_);
+	fprintf(fp,"Usage: pijs_gassist fg ft ft2 nt nt2 ns fp1 fp2 fp3 fp4 fp5 na nodiag memlimit%s",_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
 	fprintf(fp,"\tfg:\tPath of input file containing genotype data for E(A). Data matrix size: (nt,ns).%s",_NEWLINE_);
 	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Data matrix size: (nt,ns).%s",_NEWLINE_);
@@ -93,16 +93,17 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tnt:\tNumber of A's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tnt2:\tNumber of B's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tns:\tNumber of samples as integer%s",_NEWLINE_);
-	fprintf(fp,"\tfp1:\tPath of output file for probability of test 1, E->A v.s. E  A. Since significant eQTL inputs are expected, outputs in this file are manually set to all 1. Data vector size: (nt).%s",_NEWLINE_);
+	fprintf(fp,"\tfp1:\tPath of output file for probability of test 1, E->A v.s. E  A. For nodiag=0, because the function expects significant eQTLs, p1 always return 1. For nodiag=1, uses diagonal elements of p2. Consider replacing p1 with your own (1-FDR) from eQTL discovery. Data vector size: (nt).%s",_NEWLINE_);
 	fprintf(fp,"\tfp2:\tPath of output file for probability of test 2, E->B v.s. E  B. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tfp3:\tPath of output file for probability of test 3, E->A->B v.s. E->A->B with E->B. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tfp4:\tPath of output file for probability of test 4, E->A->B with E->B v.s. E->A  B. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tfp5:\tPath of output file for probability of test 5, E->A->B with E->B v.s. A<-E->B. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tna:\tNumber of allleles for the species considered, = n_v-1.%s",_NEWLINE_);
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
+	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-	fprintf(fp,"pij_rank_a: invokes function pij_rank_a in library%s",_NEWLINE_);
-	fprintf(fp,"Usage: pij_rank_a ft ft2 nt nt2 ns fp nodiag%s",_NEWLINE_);
+	fprintf(fp,"pij_rank: invokes function pij_rank in library%s",_NEWLINE_);
+	fprintf(fp,"Usage: pij_rank ft ft2 nt nt2 ns fp nodiag memlimit%s",_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
 	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Data matrix size: (nt,ns).%s",_NEWLINE_);
 	fprintf(fp,"\tft2:\tPath of input file containing gene expression data for B. Data matrix size: (nt2,ns).%s",_NEWLINE_);
@@ -111,83 +112,307 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tns:\tNumber of samples as integer%s",_NEWLINE_);
 	fprintf(fp,"\tfp:\tPath of output file for probability. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
+	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage. %s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
 	fprintf(fp,"File formats:%s",_NEWLINE_);
 	fprintf(fp,"This binary interface accepts two input/output file formats: raw and tsv. Within each run, all input and output files must all have the same format, either raw or tsv. This is indicated from the method name. Normal method names indicate raw file format, and appending the method name with '_tsv' or '_csv' would indicate tsv file format.%s",_NEWLINE_);
-	fprintf(fp,"\tRaw format: for matrices, row-major sequence is used. All genotype data follow type 'GTYPE', and all expression data and output probabilities follow type 'FTYPE'. Detailed definitions of GTYPE and FTYPE can be found in base/types.h in source tree, and make/def.dev in base folder. By default, GTYPE is 8-bit (1-byte) unsigned char, FTYPE is 32-bit (4-byte) signed float.%s",_NEWLINE_);
+	fprintf(fp,"\tRaw format: for matrices, row-major sequence is used. All genotype data follow type 'GTYPE', and all expression data and output probabilities follow type 'FTYPE'. Detailed definitions of GTYPE and FTYPE can be found in base/types.h in source tree. By default, GTYPE is 8-bit (1-byte) unsigned char, FTYPE is 32-bit (4-byte) signed float in native endianness.%s",_NEWLINE_);
 	fprintf(fp,"\tTsv format: tab separated value files. Each row should be separated by new line, and each column by tab or space. The number of rows and columns must match input dimensional parameters.%s",_NEWLINE_);
 }
 
-//vector and matrix tsv output functions
-#define	OFORMAT	"%.8G"
-static int vectorf_fprintf(FILE* fp,const VECTORF* v)
+//vector and matrix input output functions
+static int bin_checkfilesize(FILE* fp,size_t s,const char f[])
 {
-	size_t	i;
-	if(!fprintf(fp,OFORMAT,VECTORFF(get)(v,0)))
-		return 1;
-	for(i=1;i<v->size;i++)
+	long fsize;
+	if(fseek(fp,0,SEEK_END))
 	{
-		if(!putc(' ',fp))
-			return 1;
-		if(!fprintf(fp,OFORMAT,VECTORFF(get)(v,i)))
-			return 1;
+		LOG(1,"Can't fseek file %s.",f)
+		return 1;
 	}
-	return !fputs(_NEWLINE_,fp);
+	fsize=ftell(fp);
+	if(fsize<0)
+	{
+		LOG(1,"Can't ftell file %s.",f)
+		return 1;
+	}
+	if((size_t)fsize!=s)
+	{
+		LOG(1,"Incorrect file size for %s",f)
+		return 1;
+	}
+	if(fseek(fp,0,SEEK_SET))
+	{
+		LOG(1,"Can't fseek file %s.",f)
+		return 1;
+	}
+	return 0;
 }
 
-static int matrixf_fprintf(FILE* fp,const MATRIXF* m)
+#define	OFORMAT	"%.8G"
+
+static int bin_matrixfi_raw(const char f[],MATRIXF* m)
 {
-	size_t	i;
-	for(i=0;i<m->size1;i++)
+	FILE	*fp;
+	fp=fopen(f,"rb");
+	if(!fp)
 	{
-		VECTORFF(const_view)	vv=MATRIXFF(const_row)(m,i);
-		if(vectorf_fprintf(fp,&vv.vector))
-			return 1;
+		LOG(1,"Can't open file %s.",f)
+		return 1;
 	}
+	if(bin_checkfilesize(fp,m->size1*m->size2*sizeof(m->data[0]),f))
+	{
+		fclose(fp);
+		return 1;
+	}
+	if(MATRIXFF(fread)(fp,m))
+	{
+		LOG(1,"Can't read file or has wrong size: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	fclose(fp);	
+	return 0;
+}
+
+static int bin_matrixfi_tsv(const char f[],MATRIXF* m)
+{
+	FILE	*fp;
+	FTYPE	tf;
+	fp=fopen(f,"rb");
+	if(!fp)
+	{
+		LOG(1,"Can't open file %s.",f)
+		return 1;
+	}
+	if(MATRIXFF(fscanf)(fp,m))
+	{
+		LOG(1,"Can't read file or has wrong size: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	if(fscanf(fp,"%f",&tf)==1)
+	{
+		LOG(1,"File has more data entries than expected: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	fclose(fp);	
+	return 0;
+}
+
+static int bin_matrixgi_raw(const char f[],MATRIXG* m)
+{
+	FILE	*fp;
+	fp=fopen(f,"rb");
+	if(!fp)
+	{
+		LOG(1,"Can't open file %s.",f)
+		return 1;
+	}
+	if(bin_checkfilesize(fp,m->size1*m->size2*sizeof(m->data[0]),f))
+	{
+		fclose(fp);
+		return 1;
+	}
+	if(MATRIXGF(fread)(fp,m))
+	{
+		LOG(1,"Can't read file or has wrong size: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+
+	fclose(fp);	
+	return 0;
+}
+
+static int bin_matrixgi_tsv(const char f[],MATRIXG* m)
+{
+	FILE	*fp;
+	int		tg;
+	fp=fopen(f,"rb");
+	if(!fp)
+	{
+		LOG(1,"Can't open file %s.",f)
+		return 1;
+	}
+	if(MATRIXGF(fscanf)(fp,m))
+	{
+		LOG(1,"Can't read file or has wrong size: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	if(fscanf(fp,"%i",&tg)==1)
+	{
+		LOG(1,"File has more data entries than expected: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	fclose(fp);	
+	return 0;
+}
+
+static int bin_matrixfo_raw(const char f[],const MATRIXF* m)
+{
+	FILE	*fp;
+	fp=fopen(f,"wb");
+	if(!fp)
+	{
+		LOG(1,"Can't open file %s.",f)
+		return 1;
+	}
+	if(MATRIXFF(fwrite)(fp,m))
+	{
+		LOG(1,"Can't write file: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	fclose(fp);	
+	return 0;
+}
+
+static int bin_matrixfo_tsv(const char f[],const MATRIXF* m)
+{
+	FILE	*fp;
+	size_t	i,j;
+	fp=fopen(f,"wb");
+	if(!fp)
+	{
+		LOG(1,"Can't open file %s.",f)
+		return 1;
+	}
+	for(j=0;j<m->size1;j++)
+	{
+		if(!fprintf(fp,OFORMAT,MATRIXFF(get)(m,j,0)))
+		{
+			LOG(1,"Can't write file: %s.",f)
+			fclose(fp);
+			return 1;
+		}
+		for(i=1;i<m->size2;i++)
+			if((!putc('\t',fp))||(!fprintf(fp,OFORMAT,MATRIXFF(get)(m,j,i))))
+			{
+				LOG(1,"Can't write file: %s.",f)
+				fclose(fp);
+				return 1;
+			}
+		if(!fputs(_NEWLINE_,fp))
+		{
+			LOG(1,"Can't write file: %s.",f)
+			fclose(fp);
+			return 1;
+		}
+	}
+	fclose(fp);	
+	return 0;
+}
+
+static int bin_vectorfo_raw(const char f[],const VECTORF* v)
+{
+	FILE	*fp;
+	fp=fopen(f,"wb");
+	if(!fp)
+	{
+		LOG(1,"Can't open file %s.",f)
+		return 1;
+	}
+	if(VECTORFF(fwrite)(fp,v))
+	{
+		LOG(1,"Can't write file: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	fclose(fp);	
+	return 0;
+}
+
+static int bin_vectorfo_tsv(const char f[],const VECTORF* v)
+{
+	FILE	*fp;
+	size_t	i;
+	fp=fopen(f,"wb");
+	if(!fp)
+	{
+		LOG(1,"Can't open file %s.",f)
+		return 1;
+	}
+	if(!fprintf(fp,OFORMAT,VECTORFF(get)(v,0)))
+	{
+		LOG(1,"Can't write file: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	for(i=1;i<v->size;i++)
+		if((!putc('\t',fp))||(!fprintf(fp,OFORMAT,VECTORFF(get)(v,i))))
+		{
+			LOG(1,"Can't write file: %s.",f)
+			fclose(fp);
+			return 1;
+		}
+	if(!fputs(_NEWLINE_,fp))
+	{
+		LOG(1,"Can't write file: %s.",f)
+		fclose(fp);
+		return 1;
+	}
+	fclose(fp);
 	return 0;
 }
 #undef	OFORMAT
 
 //Library initialization
-void bin_call_lib_init(const char* argv[])
+int bin_call_lib_init(const char* argv[])
 {
 	unsigned char loglv;
 	unsigned long rs;
 	size_t nth;
-	loglv=(unsigned char)atoi(argv[0]);
-	sscanf(argv[1],"%lu",&rs);
-	nth=(size_t)atoi(argv[2]);
+	int	loglv0,nth0;
+	loglv0=(unsigned char)atoi(argv[0]);
+	if((loglv0<0)||(loglv0>12))
+	{
+		fprintf(stderr,"Log level must be between 0 and 12.");
+		return 1;
+	}
+	loglv=(unsigned char)loglv0;
 	if(!loglv)
 		loglv=LOGLV_AUTO;
-	lib_init(loglv,rs,nth);
-}
+	sscanf(argv[1],"%lu",&rs);
+	nth0=atoi(argv[2]);
+	if(nth0<0)
+	{
+		fprintf(stderr,"Thead count must be nonnegative.");
+		return 1;
+	}
+	nth=(size_t)nth0;
 
+	lib_init(loglv,rs,nth);
+	if(nth>64)
+		LOG(6,"Thread count %lu is very large.", nth)
+	return 0;
+}
 
 /*****************************************************************************
  *	Exposed functions
  ****************************************************************************/
 
 //pij_rank generic function, for raw and tsv versions
-int bin_pij_rank_func(int argc,const char* argv[],int (*func)(const MATRIXF*,const MATRIXF*,MATRIXF*,char),const char funcname[],int (*fin_fm)(FILE*,MATRIXF*),int (*fout_fm)(FILE*,const MATRIXF*))
+int bin_pij_rank_func(int argc,const char* argv[],int (*func)(const MATRIXF*,const MATRIXF*,MATRIXF*,char,size_t),const char funcname[],int (*fin_fm)(const char[],MATRIXF*),int (*fout_fm)(const char[],const MATRIXF*))
 {
-#define CLEANUP CLEANMATF(t)CLEANMATF(t2)CLEANMATF(p)\
-				if(fp){fclose(fp);fp=0;}
+#define CLEANUP CLEANMATF(t)CLEANMATF(t2)CLEANMATF(p)
 	const char *f_t,*f_t2,*f_p;
 	char nodiag;
-	size_t	ns,ng,nt;
-	FILE	*fp=0;
+	size_t	ns,ng,nt,memlimit;
 	MATRIXF	*t=0,*t2=0,*p=0;
 	
-	if(argc!=7)
+	if(argc!=8)
 	{
 		LOG(0,"Wrong argument count.")
 		return -1;
 	}
 	f_t=argv[0];
 	f_t2=argv[1];
-	ng=(size_t)atoi(argv[2]);
-	nt=(size_t)atoi(argv[3]);
-	ns=(size_t)atoi(argv[4]);
+	ng=(size_t)atol(argv[2]);
+	nt=(size_t)atol(argv[3]);
+	ns=(size_t)atol(argv[4]);
 	if(!(ng&&nt&&ns))
 	{
 		LOG(0,"Invalid input dimensions.")
@@ -197,9 +422,12 @@ int bin_pij_rank_func(int argc,const char* argv[],int (*func)(const MATRIXF*,con
 	nodiag=(char)atoi(argv[6]);
 	if((nodiag!=0)&&(nodiag!=1))
 	{
-		LOG(0,"Invalid nodiag value.")
+		LOG(0,"Invalid nodiag value %i.",nodiag)
 		return -1;
 	}
+	memlimit=(size_t)atol(argv[7]);
+	if(!memlimit)
+		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
 	
 	//Memory allocation
@@ -211,74 +439,41 @@ int bin_pij_rank_func(int argc,const char* argv[],int (*func)(const MATRIXF*,con
 	
 	//File reads
 	LOG(11,"Reading file %s.",f_t)
-	fp=fopen(f_t,"rb");
-	if(!fp)
-		ERRRET("Can't open file %s.",f_t)
-	if(fin_fm(fp,t))
+	if(fin_fm(f_t,t))
 		ERRRET("Can't read file or has wrong size: %s.",f_t)
-	fclose(fp);	
 	LOG(11,"Reading file %s.",f_t2)
-	fp=fopen(f_t2,"rb");
-	if(!fp)
-		ERRRET("Can't open file %s.",f_t2)
-	if(fin_fm(fp,t2))
+	if(fin_fm(f_t2,t2))
 		ERRRET("Can't read file or has wrong size: %s.",f_t2)
-	fclose(fp);
-	fp=0;
 	
 	//Calculation
-	if(func(t,t2,p,nodiag))
+	if(func(t,t2,p,nodiag,memlimit))
 		ERRRET("%s failed.",funcname)
 	
 	//File writes
 	LOG(11,"Writing file %s.",f_p)
-	fp=fopen(f_p,"wb");
-	if(!fp)
-		ERRRET("Can't open file %s.", f_p)
-	if(fout_fm(fp,p))
+	if(fout_fm(f_p,p))
 		ERRRET("Can't write to file %s.",f_p)
-	fclose(fp);
-	fp=0;
-	
+
 	CLEANUP
 	LOG(8,"%s completed.",funcname)
 	return 0;
 #undef CLEANUP
 }
 
-static inline int bin_pij_rank_a(int argc,const char* argv[])
-{
-	return bin_pij_rank_func(argc,argv,pij_rank_a,"pij_rank_a",MATRIXFF(fread),MATRIXFF(fwrite));
-}
-
-static inline int bin_pij_rank_a_tsv(int argc,const char* argv[])
-{
-	return bin_pij_rank_func(argc,argv,pij_rank_a,"pij_rank_a_tsv",MATRIXFF(fscanf),matrixf_fprintf);
-}
-
-//pijs_gassist generic function, for pijs_gassist_a and pijs_gassist_tot, for raw and tsv versions
-int bin_pijs_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,const MATRIXF*,const MATRIXF*,VECTORF*,MATRIXF*,MATRIXF*,MATRIXF*,MATRIXF*,size_t,char),const char funcname[],int (*fin_gm)(FILE*,MATRIXG*),int (*fin_fm)(FILE*,MATRIXF*),int (*fout_fv)(FILE*,const VECTORF*),int (*fout_fm)(FILE*,const MATRIXF*))
+//pijs_gassist generic function, for pijs_gassist, for raw and tsv versions
+int bin_pijs_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,const MATRIXF*,const MATRIXF*,VECTORF*,MATRIXF*,MATRIXF*,MATRIXF*,MATRIXF*,size_t,char,size_t),const char funcname[],int (*fin_gm)(const char[],MATRIXG*),int (*fin_fm)(const char[],MATRIXF*),int (*fout_fv)(const char[],const VECTORF*),int (*fout_fm)(const char[],const MATRIXF*))
 {
 #define CLEANUP CLEANMATG(g)CLEANMATF(t)CLEANMATF(t2)CLEANVECF(p1)\
-				CLEANMATF(p2)CLEANMATF(p3)CLEANMATF(p4)CLEANMATF(p5)\
-				if(fp){fclose(fp);fp=0;}
-#define FWRITE(F,FP,P)	LOG(11,"Writing file %s.",FP)\
-						fp=fopen(FP,"wb");\
-						if(!fp)\
-							ERRRET("Can't open file %s.", FP)\
-						if(F(fp,P))\
-							ERRRET("Can't write to file %s.",FP)\
-						fclose(fp);
+				CLEANMATF(p2)CLEANMATF(p3)CLEANMATF(p4)CLEANMATF(p5)
 	const char *f_g,*f_t,*f_t2,*f_p1,*f_p2,*f_p3,*f_p4,*f_p5;
 	char nodiag;
-	size_t	ns,ng,nt;
+	size_t	ns,ng,nt,memlimit;
 	size_t	nv;
-	FILE	*fp=0;
 	VECTORF		*p1=0;
 	MATRIXG		*g=0;
 	MATRIXF		*t=0,*t2=0,*p2=0,*p3=0,*p4=0,*p5=0;
 	
-	if(argc!=13)
+	if(argc!=14)
 	{
 		LOG(0,"Wrong argument count.")
 		return -1;
@@ -286,16 +481,16 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*
 	f_g=argv[0];
 	f_t=argv[1];
 	f_t2=argv[2];
-	ng=(size_t)atoi(argv[3]);
-	nt=(size_t)atoi(argv[4]);
-	ns=(size_t)atoi(argv[5]);
+	ng=(size_t)atol(argv[3]);
+	nt=(size_t)atol(argv[4]);
+	ns=(size_t)atol(argv[5]);
 	f_p1=argv[6];
 	f_p2=argv[7];
 	f_p3=argv[8];
 	f_p4=argv[9];
 	f_p5=argv[10];
-	nv=(size_t)atoi(argv[11])+1;
-	if(!(ng&&nt&&ns&&(nv-1)))
+	nv=(size_t)atol(argv[11])+1;
+	if((!(ng&&nt&&ns))||(nv<2))
 	{
 		LOG(0,"Invalid input dimensions or allele count.")
 		return -1;
@@ -306,6 +501,9 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*
 		LOG(0,"Invalid nodiag value.")
 		return -1;
 	}
+	memlimit=(size_t)atol(argv[13]);
+	if(!memlimit)
+		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
 	
 	//Memory allocation
@@ -322,68 +520,49 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*
 	
 	//File reads
 	LOG(11,"Reading file %s.",f_g)
-	fp=fopen(f_g,"rb");
-	if(!fp)
-		ERRRET("Can't open file %s.",f_g)
-	if(fin_gm(fp,g))
+	if(fin_gm(f_g,g))
 		ERRRET("Can't read file or has wrong size: %s.",f_g)
-	fclose(fp);
 	LOG(11,"Reading file %s.",f_t)
-	fp=fopen(f_t,"rb");
-	if(!fp)
-		ERRRET("Can't open file %s.",f_t)
-	if(fin_fm(fp,t))
+	if(fin_fm(f_t,t))
 		ERRRET("Can't read file or has wrong size: %s.",f_t)
-	fclose(fp);	
 	LOG(11,"Reading file %s.",f_t2)
-	fp=fopen(f_t2,"rb");
-	if(!fp)
-		ERRRET("Can't open file %s.",f_t2)
-	if(fin_fm(fp,t2))
+	if(fin_fm(f_t2,t2))
 		ERRRET("Can't read file or has wrong size: %s.",f_t2)
-	fclose(fp);
-	fp=0;
 	
 	//Calculation
-	if(func(g,t,t2,p1,p2,p3,p4,p5,nv,nodiag))
+	if(func(g,t,t2,p1,p2,p3,p4,p5,nv,nodiag,memlimit))
 		ERRRET("%s failed.",funcname)
 	
 	//File writes
-	FWRITE(fout_fv,f_p1,p1)
-	FWRITE(fout_fm,f_p2,p2)
-	FWRITE(fout_fm,f_p3,p3)
-	FWRITE(fout_fm,f_p4,p4)
-	FWRITE(fout_fm,f_p5,p5)
-	fp=0;
+	if(fout_fv(f_p1,p1))
+		ERRRET("Can't write file %s.",f_p1)
+	if(fout_fm(f_p2,p2))
+		ERRRET("Can't write file %s.",f_p2)
+	if(fout_fm(f_p3,p3))
+		ERRRET("Can't write file %s.",f_p3)
+	if(fout_fm(f_p4,p4))
+		ERRRET("Can't write file %s.",f_p4)
+	if(fout_fm(f_p5,p5))
+		ERRRET("Can't write file %s.",f_p5)
 	
 	CLEANUP
 	LOG(8,"%s completed.",funcname)
 	return 0;
-#undef FWRITE
 #undef CLEANUP
 }
 
-//pij_gassist generic function, for pij_gassist_a and pij_gassist_tot, for raw and tsv versions
-int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,const MATRIXF*,const MATRIXF*,MATRIXF*,size_t,char),const char funcname[],int (*fin_gm)(FILE*,MATRIXG*),int (*fin_fm)(FILE*,MATRIXF*),int (*fout_fm)(FILE*,const MATRIXF*))
+//pij_gassist generic function, for pij_gassist and pij_gassist_trad, for raw and tsv versions
+int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,const MATRIXF*,const MATRIXF*,MATRIXF*,size_t,char,size_t),const char funcname[],int (*fin_gm)(const char[],MATRIXG*),int (*fin_fm)(const char[],MATRIXF*),int (*fout_fm)(const char[],const MATRIXF*))
 {
-#define CLEANUP CLEANMATG(g)CLEANMATF(t)CLEANMATF(t2)CLEANMATF(p)\
-				if(fp){fclose(fp);fp=0;}
-#define FWRITE(F,FP,P)	LOG(11,"Writing file %s.",FP)\
-						fp=fopen(FP,"wb");\
-						if(!fp)\
-							ERRRET("Can't open file %s.", FP)\
-						if(F(fp,P))\
-							ERRRET("Can't write to file %s.",FP)\
-						fclose(fp);
+#define CLEANUP CLEANMATG(g)CLEANMATF(t)CLEANMATF(t2)CLEANMATF(p)
 	const char *f_g,*f_t,*f_t2,*f_p;
 	char nodiag;
-	size_t	ns,ng,nt;
+	size_t	ns,ng,nt,memlimit;
 	size_t	nv;
-	FILE	*fp=0;
 	MATRIXG		*g=0;
 	MATRIXF		*t=0,*t2=0,*p=0;
 	
-	if(argc!=9)
+	if(argc!=10)
 	{
 		LOG(0,"Wrong argument count.")
 		return -1;
@@ -391,12 +570,12 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 	f_g=argv[0];
 	f_t=argv[1];
 	f_t2=argv[2];
-	ng=(size_t)atoi(argv[3]);
-	nt=(size_t)atoi(argv[4]);
-	ns=(size_t)atoi(argv[5]);
+	ng=(size_t)atol(argv[3]);
+	nt=(size_t)atol(argv[4]);
+	ns=(size_t)atol(argv[5]);
 	f_p=argv[6];
-	nv=(size_t)atoi(argv[7])+1;
-	if(!(ng&&nt&&ns&&(nv-1)))
+	nv=(size_t)atol(argv[7])+1;
+	if((!(ng&&nt&&ns))||(nv<2))
 	{
 		LOG(0,"Invalid input dimensions or allele count.")
 		return -1;
@@ -407,6 +586,9 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 		LOG(0,"Invalid nodiag value.")
 		return -1;
 	}
+	memlimit=(size_t)atol(argv[9]);
+	if(!memlimit)
+		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
 	
 	//Memory allocation
@@ -419,35 +601,22 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 	
 	//File reads
 	LOG(11,"Reading file %s.",f_g)
-	fp=fopen(f_g,"rb");
-	if(!fp)
-		ERRRET("Can't open file %s.",f_g)
-	if(fin_gm(fp,g))
+	if(fin_gm(f_g,g))
 		ERRRET("Can't read file or has wrong size: %s.",f_g)
-	fclose(fp);
 	LOG(11,"Reading file %s.",f_t)
-	fp=fopen(f_t,"rb");
-	if(!fp)
-		ERRRET("Can't open file %s.",f_t)
-	if(fin_fm(fp,t))
+	if(fin_fm(f_t,t))
 		ERRRET("Can't read file or has wrong size: %s.",f_t)
-	fclose(fp);	
 	LOG(11,"Reading file %s.",f_t2)
-	fp=fopen(f_t2,"rb");
-	if(!fp)
-		ERRRET("Can't open file %s.",f_t2)
-	if(fin_fm(fp,t2))
+	if(fin_fm(f_t2,t2))
 		ERRRET("Can't read file or has wrong size: %s.",f_t2)
-	fclose(fp);
-	fp=0;
 	
 	//Calculation
-	if(func(g,t,t2,p,nv,nodiag))
+	if(func(g,t,t2,p,nv,nodiag,memlimit))
 		ERRRET("%s failed.",funcname)
 	
 	//File writes
-	FWRITE(fout_fm,f_p,p)
-	fp=0;
+	if(fout_fm(f_p,p))
+		ERRRET("Can't write file %s.",f_p)
 	
 	CLEANUP
 	LOG(8,"%s completed.",funcname)
@@ -456,44 +625,44 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 #undef CLEANUP
 }
 
-static inline int bin_pijs_gassist_a(int argc,const char* argv[])
+static inline int bin_pij_rank(int argc,const char* argv[])
 {
-	return bin_pijs_gassist_func(argc,argv,pijs_gassist_a,"pijs_gassist_a",MATRIXGF(fread),MATRIXFF(fread),VECTORFF(fwrite),MATRIXFF(fwrite));
+	return bin_pij_rank_func(argc,argv,pij_rank,"pij_rank",bin_matrixfi_raw,bin_matrixfo_raw);
 }
 
-static inline int bin_pijs_gassist_tot(int argc,const char* argv[])
+static inline int bin_pij_rank_tsv(int argc,const char* argv[])
 {
-	return bin_pijs_gassist_func(argc,argv,pijs_gassist_tot,"pijs_gassist_tot",MATRIXGF(fread),MATRIXFF(fread),VECTORFF(fwrite),MATRIXFF(fwrite));
+	return bin_pij_rank_func(argc,argv,pij_rank,"pij_rank_tsv",bin_matrixfi_tsv,bin_matrixfo_tsv);
 }
 
-static inline int bin_pijs_gassist_a_tsv(int argc,const char* argv[])
+static inline int bin_pijs_gassist(int argc,const char* argv[])
 {
-	return bin_pijs_gassist_func(argc,argv,pijs_gassist_a,"pijs_gassist_a_tsv",MATRIXGF(fscanf),MATRIXFF(fscanf),vectorf_fprintf,matrixf_fprintf);
+	return bin_pijs_gassist_func(argc,argv,pijs_gassist,"pijs_gassist",bin_matrixgi_raw,bin_matrixfi_raw,bin_vectorfo_raw,bin_matrixfo_raw);
 }
 
-static inline int bin_pijs_gassist_tot_tsv(int argc,const char* argv[])
+static inline int bin_pijs_gassist_tsv(int argc,const char* argv[])
 {
-	return bin_pijs_gassist_func(argc,argv,pijs_gassist_tot,"pijs_gassist_tot_tsv",MATRIXGF(fscanf),MATRIXFF(fscanf),vectorf_fprintf,matrixf_fprintf);
+	return bin_pijs_gassist_func(argc,argv,pijs_gassist,"pijs_gassist_tsv",bin_matrixgi_tsv,bin_matrixfi_tsv,bin_vectorfo_tsv,bin_matrixfo_tsv);
 }
 
-static inline int bin_pij_gassist_a(int argc,const char* argv[])
+static inline int bin_pij_gassist(int argc,const char* argv[])
 {
-	return bin_pij_gassist_func(argc,argv,pij_gassist_a,"pij_gassist_a",MATRIXGF(fread),MATRIXFF(fread),MATRIXFF(fwrite));
+	return bin_pij_gassist_func(argc,argv,pij_gassist,"pij_gassist",bin_matrixgi_raw,bin_matrixfi_raw,bin_matrixfo_raw);
 }
 
-static inline int bin_pij_gassist_tot(int argc,const char* argv[])
+static inline int bin_pij_gassist_tsv(int argc,const char* argv[])
 {
-	return bin_pij_gassist_func(argc,argv,pij_gassist_tot,"pij_gassist_tot",MATRIXGF(fread),MATRIXFF(fread),MATRIXFF(fwrite));
+	return bin_pij_gassist_func(argc,argv,pij_gassist,"pij_gassist_tsv",bin_matrixgi_tsv,bin_matrixfi_tsv,bin_matrixfo_tsv);
 }
 
-static inline int bin_pij_gassist_a_tsv(int argc,const char* argv[])
+static inline int bin_pij_gassist_trad(int argc,const char* argv[])
 {
-	return bin_pij_gassist_func(argc,argv,pij_gassist_a,"pij_gassist_a_tsv",MATRIXGF(fscanf),MATRIXFF(fscanf),matrixf_fprintf);
+	return bin_pij_gassist_func(argc,argv,pij_gassist_trad,"pij_gassist_trad",bin_matrixgi_raw,bin_matrixfi_raw,bin_matrixfo_raw);
 }
 
-static inline int bin_pij_gassist_tot_tsv(int argc,const char* argv[])
+static inline int bin_pij_gassist_trad_tsv(int argc,const char* argv[])
 {
-	return bin_pij_gassist_func(argc,argv,pij_gassist_tot,"pij_gassist_tot_tsv",MATRIXGF(fscanf),MATRIXFF(fscanf),matrixf_fprintf);
+	return bin_pij_gassist_func(argc,argv,pij_gassist_trad,"pij_gassist_trad_tsv",bin_matrixgi_tsv,bin_matrixfi_tsv,bin_matrixfo_tsv);
 }
 
 int main(int argc,const char* argv[])
@@ -511,21 +680,20 @@ int main(int argc,const char* argv[])
 	//Look for method name
 	if(argc>=5)
 	{
-		GETFUNCNAMES(pijs_gassist_a)
-		else GETFUNCNAMES(pijs_gassist_tot)
-		else GETFUNCNAMES(pij_gassist_a)
-		else GETFUNCNAMES(pij_gassist_tot)
-		else GETFUNCNAMES(pij_rank_a)
+		GETFUNCNAMES(pijs_gassist)
+		else GETFUNCNAMES(pij_gassist)
+		else GETFUNCNAMES(pij_gassist_trad)
+		else GETFUNCNAMES(pij_rank)
 	}
 	//If method name not found
 	if(!func)
 	{
 		usage(stdout,argv[0]);
-		return 0;
+		return (argc>1);
 	}
-	bin_call_lib_init(argv+1);
+	if((ret=bin_call_lib_init(argv+1)))
+		return ret;
 	ret=func(argc-5,argv+5);
-	//If wrong number of arguments
 	return ret;
 }
 #undef	GETFUNCNAME

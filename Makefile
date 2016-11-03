@@ -16,7 +16,7 @@ URL_LIB_REL="$(URL_LIB)/releases"
 URL_BIN_REL="$(URL_BIN)/releases"
 URL_R_REL="$(URL_R)/releases"
 VERSION1=0
-VERSION2=3
+VERSION2=4
 VERSION3=0
 LICENSE=AGPL-3
 LICENSE_FULL="GNU Affero General Public License, Version 3"
@@ -67,7 +67,7 @@ $(BIN_DPRODUCT): $(BIN_PRODUCT) $(DIR_BUILD)
 
 clean:
 	$(RM) $(BIN_PRODUCT)
-
+	
 distclean: clean
 	$(RM) $(BIN_DPRODUCT) Makefile.flags
 
@@ -86,7 +86,7 @@ Makefile.flags:
 	$(CC) --version &> /dev/null || ( echo "GCC not found. Please download the latest GCC or specify its location in CC variable in Makefile."; exit 1; )
 	gver=$$($(CC) --version | grep -io gcc) ; \
 	if ! [ -n "$$gver" ]; then echo "Invalid GCC version. Please download the latest GCC."; exit 1; fi
-	@cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
+	@cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I ,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
 	ldflags="$(LDFLAGS) -fopenmp -lm"; \
 	echo "Testing Windows"; \
 	gver=$$($(CC) --version) ; \
@@ -103,7 +103,7 @@ Makefile.flags:
 	$(LD) -Wl,-rpath="$$$$ORIGIN" $$ldflags --shared -o $(TMP_FILE) &> /dev/null && \
 	ldflags="-Wl,-rpath=\""'$$$$'"ORIGIN\" $(addsuffix \",$(addprefix -Wl$(COMMA)-rpath=\",$(DIR_BUILD_LIB))) $$ldflags"; \
 	echo "CFLAGS=$$cflags" > $@ && \
-	echo "LDFLAGS=$$ldflags $(addprefix -L,$(DIR_BUILD_LIB)) -L. -l$(LIB_NAME) -lgsl -lgslcblas" >> $@
+	echo "LDFLAGS=$$ldflags $(addprefix -L ,$(DIR_BUILD_LIB)) -L . -l$(LIB_NAME) -lgsl -lgslcblas" >> $@
 	$(RM) $(TMP_FILE)
 
 ifdef INCLUDE_MAKEFILE_AFTER
