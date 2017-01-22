@@ -1,4 +1,4 @@
-/* Copyright 2016 Lingfei Wang
+/* Copyright 2016, 2017 Lingfei Wang
  * 
  * This file is part of Findr.
  * 
@@ -61,6 +61,7 @@ void checkversion()
 //Display usage info.
 void usage(FILE* fp,const char* binpath)
 {
+	fprintf(fp,"NOTE: This is a brief usage instruction. For more details, see doc.pdf.%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth method [method-args...]%s",binpath,_NEWLINE_);
 	fprintf(fp,"\tloglv:\tLog level, 0 for automatic (warnings + errors)%s",_NEWLINE_);
 	fprintf(fp,"\trs:\tInitial random seed. 0 for using current time.%s",_NEWLINE_);
@@ -71,25 +72,25 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"%s",_NEWLINE_);
 	fprintf(fp,"pij_gassist: invokes function pij_gassist in library and provides recommended causal inference of regulatory relations%s",_NEWLINE_);
 	fprintf(fp,"pij_gassist_trad: invokes function pij_gassist_trad in library and performs traditional causal inference test. WARNING: This is not and is not intended as a loyal reimplementation of Trigger R package.%s",_NEWLINE_);
-	fprintf(fp,"Usage: pij_gassist* fg ft ft2 nt nt2 ns fp na nodiag memlimit%s",_NEWLINE_);
+	fprintf(fp,"Usage: %s loglv rs nth pij_gassist* fg ft ft2 nt nt2 ns fp na nodiag memlimit%s",binpath,_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
-	fprintf(fp,"\tfg:\tPath of input file containing genotype data for E(A). Data matrix size: (nt,ns).%s",_NEWLINE_);
-	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Data matrix size: (nt,ns).%s",_NEWLINE_);
-	fprintf(fp,"\tft2:\tPath of input file containing gene expression data for B. Data matrix size: (nt2,ns).%s",_NEWLINE_);
+	fprintf(fp,"\tfg:\tPath of input file containing genotype data for E(A). Element [i,j] is the genotype value of the best eQTL of gene i of sample j, and should be among values 0,1,...,na. Data matrix size: (nt,ns). %s",_NEWLINE_);
+	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Element [i,j] is the expression level of gene i of sample j. Data matrix size: (nt,ns).%s",_NEWLINE_);
+	fprintf(fp,"\tft2:\tPath of input file containing gene expression data for B. Element [i,j] is the expression level of gene i of sample j. Data matrix size: (nt2,ns).%s",_NEWLINE_);
 	fprintf(fp,"\tnt:\tNumber of A's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tnt2:\tNumber of B's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tns:\tNumber of samples as integer%s",_NEWLINE_);
 	fprintf(fp,"\tfp:\tPath of output file for inferred posterior probability of the test of interest, either the recommended test by pij_gassist, or the traditional test by pij_gassist_trad. Data matrix size: (nt,nt2).%s",_NEWLINE_);
-	fprintf(fp,"\tna:\tNumber of allleles for the species considered, = n_v-1.%s",_NEWLINE_);
+	fprintf(fp,"\tna:\tNumber of allleles for the species considered.%s",_NEWLINE_);
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
 	fprintf(fp,"pijs_gassist: invokes function pijs_gassist in library%s",_NEWLINE_);
-	fprintf(fp,"Usage: pijs_gassist fg ft ft2 nt nt2 ns fp1 fp2 fp3 fp4 fp5 na nodiag memlimit%s",_NEWLINE_);
+	fprintf(fp,"Usage: %s loglv rs nth pijs_gassist fg ft ft2 nt nt2 ns fp1 fp2 fp3 fp4 fp5 na nodiag memlimit%s",binpath,_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
-	fprintf(fp,"\tfg:\tPath of input file containing genotype data for E(A). Data matrix size: (nt,ns).%s",_NEWLINE_);
-	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Data matrix size: (nt,ns).%s",_NEWLINE_);
-	fprintf(fp,"\tft2:\tPath of input file containing gene expression data for B. Data matrix size: (nt2,ns).%s",_NEWLINE_);
+	fprintf(fp,"\tfg:\tPath of input file containing genotype data for E(A). Element [i,j] is the genotype value of the best eQTL of gene i of sample j, and should be among values 0,1,...,na. Data matrix size: (nt,ns).%s",_NEWLINE_);
+	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Element [i,j] is the expression level of gene i of sample j. Data matrix size: (nt,ns).%s",_NEWLINE_);
+	fprintf(fp,"\tft2:\tPath of input file containing gene expression data for B. Element [i,j] is the expression level of gene i of sample j. Data matrix size: (nt2,ns).%s",_NEWLINE_);
 	fprintf(fp,"\tnt:\tNumber of A's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tnt2:\tNumber of B's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tns:\tNumber of samples as integer%s",_NEWLINE_);
@@ -98,15 +99,15 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tfp3:\tPath of output file for probability of test 3, E->A->B v.s. E->A->B with E->B. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tfp4:\tPath of output file for probability of test 4, E->A->B with E->B v.s. E->A  B. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tfp5:\tPath of output file for probability of test 5, E->A->B with E->B v.s. A<-E->B. Data matrix size: (nt,nt2).%s",_NEWLINE_);
-	fprintf(fp,"\tna:\tNumber of allleles for the species considered, = n_v-1.%s",_NEWLINE_);
+	fprintf(fp,"\tna:\tNumber of allleles for the species considered.%s",_NEWLINE_);
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
 	fprintf(fp,"pij_rank: invokes function pij_rank in library%s",_NEWLINE_);
-	fprintf(fp,"Usage: pij_rank ft ft2 nt nt2 ns fp nodiag memlimit%s",_NEWLINE_);
+	fprintf(fp,"Usage: %s loglv rs nth pij_rank ft ft2 nt nt2 ns fp nodiag memlimit%s",binpath, _NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
-	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Data matrix size: (nt,ns).%s",_NEWLINE_);
-	fprintf(fp,"\tft2:\tPath of input file containing gene expression data for B. Data matrix size: (nt2,ns).%s",_NEWLINE_);
+	fprintf(fp,"\tft:\tPath of input file containing gene expression data for A. Element [i,j] is the expression level of gene i of sample j. Data matrix size: (nt,ns).%s",_NEWLINE_);
+	fprintf(fp,"\tft2:\tPath of input file containing gene expression data for B. Element [i,j] is the expression level of gene i of sample j. Data matrix size: (nt2,ns).%s",_NEWLINE_);
 	fprintf(fp,"\tnt:\tNumber of A's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tnt2:\tNumber of B's as integer%s",_NEWLINE_);
 	fprintf(fp,"\tns:\tNumber of samples as integer%s",_NEWLINE_);
@@ -115,7 +116,7 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage. %s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
 	fprintf(fp,"File formats:%s",_NEWLINE_);
-	fprintf(fp,"This binary interface accepts two input/output file formats: raw and tsv. Within each run, all input and output files must all have the same format, either raw or tsv. This is indicated from the method name. Normal method names indicate raw file format, and appending the method name with '_tsv' or '_csv' would indicate tsv file format.%s",_NEWLINE_);
+	fprintf(fp,"This binary interface accepts two input/output file formats: raw and tsv. Within each run, all input and output files must all have the same format, either raw or tsv. This is indicated from the method name. Normal method names indicate raw file format, and appending the method name with '_tsv' would indicate tsv file format.%s",_NEWLINE_);
 	fprintf(fp,"\tRaw format: for matrices, row-major sequence is used. All genotype data follow type 'GTYPE', and all expression data and output probabilities follow type 'FTYPE'. Detailed definitions of GTYPE and FTYPE can be found in base/types.h in source tree. By default, GTYPE is 8-bit (1-byte) unsigned char, FTYPE is 32-bit (4-byte) signed float in native endianness.%s",_NEWLINE_);
 	fprintf(fp,"\tTsv format: tab separated value files. Each row should be separated by new line, and each column by tab or space. The number of rows and columns must match input dimensional parameters.%s",_NEWLINE_);
 }
@@ -440,10 +441,10 @@ int bin_pij_rank_func(int argc,const char* argv[],int (*func)(const MATRIXF*,con
 	//File reads
 	LOG(11,"Reading file %s.",f_t)
 	if(fin_fm(f_t,t))
-		ERRRET("Can't read file or has wrong size: %s.",f_t)
+		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t)
 	LOG(11,"Reading file %s.",f_t2)
 	if(fin_fm(f_t2,t2))
-		ERRRET("Can't read file or has wrong size: %s.",f_t2)
+		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t2)
 	
 	//Calculation
 	if(func(t,t2,p,nodiag,memlimit))
@@ -521,13 +522,13 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*
 	//File reads
 	LOG(11,"Reading file %s.",f_g)
 	if(fin_gm(f_g,g))
-		ERRRET("Can't read file or has wrong size: %s.",f_g)
+		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_g)
 	LOG(11,"Reading file %s.",f_t)
 	if(fin_fm(f_t,t))
-		ERRRET("Can't read file or has wrong size: %s.",f_t)
+		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t)
 	LOG(11,"Reading file %s.",f_t2)
 	if(fin_fm(f_t2,t2))
-		ERRRET("Can't read file or has wrong size: %s.",f_t2)
+		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t2)
 	
 	//Calculation
 	if(func(g,t,t2,p1,p2,p3,p4,p5,nv,nodiag,memlimit))
@@ -602,13 +603,13 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 	//File reads
 	LOG(11,"Reading file %s.",f_g)
 	if(fin_gm(f_g,g))
-		ERRRET("Can't read file or has wrong size: %s.",f_g)
+		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_g)
 	LOG(11,"Reading file %s.",f_t)
 	if(fin_fm(f_t,t))
-		ERRRET("Can't read file or has wrong size: %s.",f_t)
+		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t)
 	LOG(11,"Reading file %s.",f_t2)
 	if(fin_fm(f_t2,t2))
-		ERRRET("Can't read file or has wrong size: %s.",f_t2)
+		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t2)
 	
 	//Calculation
 	if(func(g,t,t2,p,nv,nodiag,memlimit))
