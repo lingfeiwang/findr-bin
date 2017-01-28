@@ -13,3 +13,8 @@ findr 0 0 0 pij_gassist data/geuvadis/dg.dat data/geuvadis/dt.dat data/geuvadis/
 # Or use tsv input/output format
 findr 0 0 0 pij_gassist_tsv data/geuvadis/dg.tsv data/geuvadis/dt.tsv data/geuvadis/dt2.tsv 10 3000 360 data/geuvadis/dp.tsv 2 0 0
 
+#Constructs maximal directed acyclic graph based on prior information on edge significance obtained from pij_gassist
+findr 0 0 0 netr_one_greedy data/geuvadis/dp.dat 10 data/geuvadis/dnet.dat 0 0 0 
+# Or use tsv input/output format
+findr 0 0 0 netr_one_greedy_tsv data/geuvadis/dp.tsv 10 data/geuvadis/dnet.tsv 0 0 0
+
