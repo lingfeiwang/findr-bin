@@ -15,8 +15,8 @@ URL_DOC="https://github.com/lingfeiwang/findr/blob/master/doc.pdf"
 URL_LIB_REL="$(URL_LIB)/releases"
 URL_BIN_REL="$(URL_BIN)/releases"
 URL_R_REL="$(URL_R)/releases"
-VERSION1=0
-VERSION2=5
+VERSION1=1
+VERSION2=0
 VERSION3=0
 LICENSE=AGPL-3
 LICENSE_FULL="GNU Affero General Public License, Version 3"
@@ -86,7 +86,7 @@ Makefile.flags:
 	$(CC) --version &> /dev/null || ( echo "GCC not found. Please download the latest GCC or specify its location in CC variable in Makefile."; exit 1; )
 	gver=$$($(CC) --version | grep -io gcc) ; \
 	if ! [ -n "$$gver" ]; then echo "Invalid GCC version. Please download the latest GCC."; exit 1; fi
-	@cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I ,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
+	@cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -DLIBINFOVERSION1=$(VERSION1) -DLIBINFOVERSION2=$(VERSION2) -DLIBINFOVERSION3=$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I ,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
 	ldflags="$(LDFLAGS) -fopenmp -lm"; \
 	echo "Testing Windows"; \
 	gver=$$($(CC) --version) ; \

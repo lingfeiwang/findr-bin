@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Findr.  If not, see <http://www.gnu.org/licenses/>.
  */
-// #define	ENABLE_PV
-// #define	ENABLE_CASSIST
+#define	ENABLE_PV
+#define	ENABLE_CASSIST
 #define	ENABLE_NETR
 
 #include <stdlib.h>
@@ -44,28 +44,39 @@
 #define	LOGLV_AUTO	6
 
 //Checks binary and library versions are the same. Otherwise prints warning
-void checkversion()
+int checkversion()
 {
 	const char bln[]=SLIBINFONAME;
 	const char blv[]=SLIBINFOVERSION;
 	const char* ln=lib_name();
 	const char* lv=lib_version();
-	char diff=0;
+	size_t lv1=lib_version1();
+	size_t lv2=lib_version2();
+	size_t lv3=lib_version3();
+	int diff=0;
 	
 	if(strcmp(bln,ln))
 	{
 		diff=1;
-		fprintf(stderr,"Warning: different names for binary interface and library.");
+		fprintf(stderr,"Error: different names for binary interface and library. Skipped.");
 	}
-	if(strcmp(blv,lv))
+	if(LIBINFOVERSION1!=lv1)
 	{
 		diff=1;
-		fprintf(stderr,"Warning: different versions for binary interface and library.");
+		fprintf(stderr,"Error: different major versions for binary interface and library. Skipped.");
 	}
+	else if(LIBINFOVERSION2!=lv2)
+	{
+		diff=1;
+		fprintf(stderr,"Error: different minor versions for binary interface and library. Skipped.");
+	}
+	else if(LIBINFOVERSION3!=lv3)
+		fprintf(stderr,"Warning: different minor versions for binary interface and library. Loaded.");
 
 	fprintf(stderr,"Binary interface for library %s, version %s.%s",bln,blv,_NEWLINE_);
 	if(diff)
 		fprintf(stderr,"Using library name %s, version %s.%s",ln,lv,_NEWLINE_);
+	return diff;
 }
 
 //Display usage info.
@@ -847,7 +858,7 @@ static inline int bin_pijs_gassist_tsv(int argc,const char* argv[])
 
 #ifdef	ENABLE_CASSIST
 //pijs_cassist generic function, for pijs_cassist, for raw and tsv versions
-int bin_pijs_cassist_func(int argc,const char* argv[],int (*func)(const MATRIXF*,const MATRIXF*,const MATRIXF*,VECTORF*,MATRIXF*,MATRIXF*,MATRIXF*,MATRIXF*,char,size_t),int (*fin_fm)(const char[],MATRIXF*),int (*fout_fv)(const char[],const VECTORF*),int (*fout_fm)(const char[],const MATRIXF*))
+int bin_pijs_cassist_func(int argc,const char* argv[],int (*fin_fm)(const char[],MATRIXF*),int (*fout_fv)(const char[],const VECTORF*),int (*fout_fm)(const char[],const MATRIXF*))
 {
 #define CLEANUP CLEANMATF(g)CLEANMATF(t)CLEANMATF(t2)CLEANVECF(p1)\
 				CLEANMATF(p2)CLEANMATF(p3)CLEANMATF(p4)CLEANMATF(p5)
@@ -915,7 +926,7 @@ int bin_pijs_cassist_func(int argc,const char* argv[],int (*func)(const MATRIXF*
 		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t2)
 	
 	//Calculation
-	if(func(g,t,t2,p1,p2,p3,p4,p5,nodiag,memlimit))
+	if(pijs_cassist(g,t,t2,p1,p2,p3,p4,p5,nodiag,memlimit))
 		ERRRET("%s failed.",funcname)
 	
 	//File writes
@@ -938,12 +949,12 @@ int bin_pijs_cassist_func(int argc,const char* argv[],int (*func)(const MATRIXF*
 
 static inline int bin_pijs_cassist(int argc,const char* argv[])
 {
-	return bin_pijs_cassist_func(argc,argv,pijs_cassist,bin_matrixfi_raw,bin_vectorfo_raw,bin_matrixfo_raw);
+	return bin_pijs_cassist_func(argc,argv,bin_matrixfi_raw,bin_vectorfo_raw,bin_matrixfo_raw);
 }
 
 static inline int bin_pijs_cassist_tsv(int argc,const char* argv[])
 {
-	return bin_pijs_cassist_func(argc,argv,pijs_cassist,bin_matrixfi_tsv,bin_vectorfo_tsv,bin_matrixfo_tsv);
+	return bin_pijs_cassist_func(argc,argv,bin_matrixfi_tsv,bin_vectorfo_tsv,bin_matrixfo_tsv);
 }
 
 //pij_cassist generic function, for pij_cassist and pij_cassist_trad, for raw and tsv versions
@@ -1241,7 +1252,7 @@ int bin_pijs_cassist_pv_func(int argc,const char* argv[],int (*fin_fm)(const cha
 		LOG(0,"Invalid input dimensions.")
 		return -1;
 	}
-	memlimit=(size_t)atol(argv[11]);
+	memlimit=(size_t)atol(argv[12]);
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
@@ -1398,7 +1409,8 @@ int main(int argc,const char* argv[])
 	int	ret;
 	int	(*func)(int,const char*[]);
 	
-	checkversion();
+	if(checkversion())
+		return 1;
 	func=0;
 	//Look for method name
 	if(argc>=5)
