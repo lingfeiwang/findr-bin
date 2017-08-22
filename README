@@ -6,7 +6,7 @@ This package is the binary interface of Findr library, downloadable from [3]. It
 
 A more detailed documentation of Findr can be found as doc.pdf. For the list of updates in the binary interface, see UPDATES. For updates in functionality, see README in [2]. For examples to use the binary interface, see EXAMPLES.
 
-[1] Lingfei Wang and Tom Michoel, Efficient causal inference with hidden confounders from genome-transcriptome variation data (In preparation). 2016. https://arxiv.org/abs/1611.01114
+[1] Lingfei Wang and Tom Michoel (2017) Efficient and accurate causal inference with hidden confounders from genome-transcriptome variation data. PLOS Computational Biology 13(8): e1005703. https://doi.org/10.1371/journal.pcbi.1005703
 [2] https://github.com/lingfeiwang/findr
 [3] https://github.com/lingfeiwang/findr-bin
 [4] https://github.com/lingfeiwang/findr-python
