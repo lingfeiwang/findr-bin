@@ -684,7 +684,7 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 	ns=(size_t)atol(argv[6]);
 	f_p=argv[7];
 	nv=(size_t)atol(argv[8])+1;
-	if((!(ng&&nt&&ns))||(nv<2))
+	if((!(ng&&nt&&ns))||!nv)
 	{
 		LOG(0,"Invalid input dimensions or allele count.")
 		return -1;
@@ -712,6 +712,15 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 	LOG(11,"Reading file %s.",f_g)
 	if(fin_gm(f_g,g))
 		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_g)
+	if(nv==1)
+	{
+		nv=(size_t)MATRIXGF(max)(g)+1;
+		if(nv<2)
+			ERRRET("Failed to autodetect allele count. Please check your genotype input file.")
+		else
+			LOG(9,"Autodetected number of alleles=%u.",nv-1)
+	}
+
 	LOG(11,"Reading file %s.",f_t)
 	if(fin_fm(f_t,t))
 		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t)
@@ -785,7 +794,7 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*fin_gm)(const char[]
 	f_p4=argv[10];
 	f_p5=argv[11];
 	nv=(size_t)atol(argv[12])+1;
-	if((!(ng&&nt&&ns))||(nv<2))
+	if((!(ng&&nt&&ns))||!nv)
 	{
 		LOG(0,"Invalid input dimensions or allele count.")
 		return -1;
@@ -817,6 +826,14 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*fin_gm)(const char[]
 	LOG(11,"Reading file %s.",f_g)
 	if(fin_gm(f_g,g))
 		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_g)
+	if(nv==1)
+	{
+		nv=(size_t)MATRIXGF(max)(g)+1;
+		if(nv<2)
+			ERRRET("Failed to autodetect allele count. Please check your genotype input file.")
+		else
+			LOG(9,"Autodetected number of alleles=%u.",nv-1)
+	}
 	LOG(11,"Reading file %s.",f_t)
 	if(fin_fm(f_t,t))
 		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t)
@@ -1153,7 +1170,7 @@ int bin_pijs_gassist_pv_func(int argc,const char* argv[],int (*fin_gm)(const cha
 	f_p4=argv[10];
 	f_p5=argv[11];
 	nv=(size_t)atol(argv[12])+1;
-	if((!(ng&&nt&&ns))||(nv<2))
+	if((!(ng&&nt&&ns))||!nv)
 	{
 		LOG(0,"Invalid input dimensions or allele count.")
 		return -1;
@@ -1179,6 +1196,14 @@ int bin_pijs_gassist_pv_func(int argc,const char* argv[],int (*fin_gm)(const cha
 	LOG(11,"Reading file %s.",f_g)
 	if(fin_gm(f_g,g))
 		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_g)
+	if(nv==1)
+	{
+		nv=(size_t)MATRIXGF(max)(g)+1;
+		if(nv<2)
+			ERRRET("Failed to autodetect allele count. Please check your genotype input file.")
+		else
+			LOG(9,"Autodetected number of alleles=%u.",nv-1)
+	}
 	LOG(11,"Reading file %s.",f_t)
 	if(fin_fm(f_t,t))
 		ERRRET("Can't read file or has wrong size: %s. Make sure your file format matches with method name. For text or tsv files, use the _tsv suffix.",f_t)

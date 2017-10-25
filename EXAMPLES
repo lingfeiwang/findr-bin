@@ -1,25 +1,28 @@
-# Calculate probability of pairwise correlation without genotype data, and with extensive log level
-findr 12 0 0 pij_rank data/geuvadis/dt.dat data/geuvadis/dt2.dat 10 3000 360 data/geuvadis/dp.dat 0 0
-# Or use tsv input/output format
-findr 12 0 0 pij_rank_tsv data/geuvadis/dt.tsv data/geuvadis/dt2.tsv 10 3000 360 data/geuvadis/dp.tsv 0 0
+# Data file descriptions can be found in data/geuvadis/README.
 
-# Calculate recommended combination of tests on pairwise regulation with genotype data, and with default log level
-findr 0 0 0 pij_gassist data/geuvadis/dg.dat data/geuvadis/dt.dat data/geuvadis/dt2.dat 10 3000 360 data/geuvadis/dp.dat 2 0 0
-# Or use tsv input/output format, future tsv file examples are similar and will be omitted
-findr 0 0 0 pij_gassist_tsv data/geuvadis/dg.tsv data/geuvadis/dt.tsv data/geuvadis/dt2.tsv 10 3000 360 data/geuvadis/dp.tsv 2 0 0
+# Perform the correlation test, without genotype data, from 10 miRNAs to 1000 genes
+findr 0 0 0 pij_rank data/geuvadis/dmi.dat data/geuvadis/dt.dat 10 1000 360 data/geuvadis/dp1.dat 0 0
+# The same calculation with extensive log level
+findr 12 0 0 pij_rank data/geuvadis/dmi.dat data/geuvadis/dt.dat 10 1000 360 data/geuvadis/dp1.dat 0 0
+# The same calculation with tsv input/output
+findr 0 0 0 pij_rank_tsv data/geuvadis/dmi.tsv data/geuvadis/dt.tsv 10 1000 360 data/geuvadis/dp1.tsv 0 0
 
-# Calculate probability of 5 tests on pairwise regulation with genotype data, and with default log level
-findr 0 0 0 pijs_gassist data/geuvadis/dg.dat data/geuvadis/dt.dat data/geuvadis/dt2.dat 10 3000 360 data/geuvadis/dp1.dat data/geuvadis/dp2.dat data/geuvadis/dp3.dat data/geuvadis/dp4.dat data/geuvadis/dp5.dat 2 0 0
+# Perform the novel causal inference test from 10 miRNAs to 1000 genes, using cis-eQTLs as causal anchors
+findr 0 0 0 pij_gassist data/geuvadis/dgmi.dat data/geuvadis/dmi.dat data/geuvadis/dt.dat 10 1000 360 data/geuvadis/dp1.dat 2 0 0
 
-# Calculate recommended combination of tests on pairwise regulation with continuous anchor data, and with default log level
-findr 0 0 0 pij_cassist data/geuvadis/dc.dat data/geuvadis/dt.dat data/geuvadis/dt2.dat 10 3000 360 data/geuvadis/dp.dat 0 0
-# Other commands for continuous data are similar, by replacing gassist with cassist, and using corresponding input file
+# Perform the novel causal inference test from 1000 genes with cis-eQTLs to all 3000 genes
+findr 0 0 0 pij_gassist data/geuvadis/dgt.dat data/geuvadis/dt.dat data/geuvadis/dt2.dat 1000 3000 360 data/geuvadis/dp1.dat 2 1 0
 
-# Calculate p-values of 5 tests on pairwise regulation with genotype data, and with default log level
-findr 0 0 0 pijs_gassist_pv data/geuvadis/dg.dat data/geuvadis/dt.dat data/geuvadis/dt2.dat 10 3000 360 data/geuvadis/dp1.dat data/geuvadis/dp2.dat data/geuvadis/dp3.dat data/geuvadis/dp4.dat data/geuvadis/dp5.dat 2 0
-# P-values for cassist and rank methods are similar, with methods pijs_cassist_pv or pij_rank_pv
-# They take the same parameters except that having no 'nodiag' parameter
+# Perform 5 subtests for causal inference test from 10 miRNAs to 1000 genes, using cis-eQTLs as causal anchors
+findr 0 0 0 pijs_gassist data/geuvadis/dgmi.dat data/geuvadis/dmi.dat data/geuvadis/dt.dat 10 1000 360 data/geuvadis/dp1.dat data/geuvadis/dp2.dat data/geuvadis/dp3.dat data/geuvadis/dp4.dat data/geuvadis/dp5.dat 2 0 0
 
-#Constructs maximal directed acyclic graph based on prior information on edge significance obtained from pij_gassist
-findr 0 0 0 netr_one_greedy data/geuvadis/dp.dat 10 data/geuvadis/dnet.dat 0 0 0 
+# Perform the novel causal inference test from 10 miRNAs to 1000 genes, using continuous causal anchors
+findr 0 0 0 pij_cassist data/geuvadis/dc.dat data/geuvadis/dmi.dat data/geuvadis/dt.dat 10 1000 360 data/geuvadis/dp1.dat 0 0
+
+# Perform 5 subtests for causal inference test from 10 miRNAs to 1000 genes, using cis-eQTLs as causal anchors and only obtaining p-values
+findr 0 0 0 pijs_gassist_pv data/geuvadis/dgmi.dat data/geuvadis/dmi.dat data/geuvadis/dt.dat 10 1000 360 data/geuvadis/dp1.dat data/geuvadis/dp2.dat data/geuvadis/dp3.dat data/geuvadis/dp4.dat data/geuvadis/dp5.dat 2 0
+
+#Constructs maximal directed acyclic graph from pairwise causal inference test probability among 1000 genes with cis-eQTLs
+findr 0 0 0 pij_gassist data/geuvadis/dgt.dat data/geuvadis/dt.dat data/geuvadis/dt.dat 1000 1000 360 data/geuvadis/dp.dat 2 1 0
+findr 0 0 0 netr_one_greedy data/geuvadis/dp.dat 1000 data/geuvadis/dnet.dat 0 0 0 
 

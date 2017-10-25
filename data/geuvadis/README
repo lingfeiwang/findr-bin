@@ -1,0 +1,10 @@
+The data files are downsampled from the Geuvadis study (Lappalainen, T. et al. Transcriptome and genome sequencing uncovers functional variation in humans. Nature 501, 506–511 (2013)), including expression levels of 10 miRNAs and 3000 genes for 360 European individuals. Among them, all miRNAs and 1000 genes have significant cis-eQTLs, whose haplotypes are also included. File data formats follow Findr's binary interface input/output requirement. A description of each file is available below:
+
+dmi.dat:	Expression levels of 10 miRNAs
+dgmi.dat:	Haplotypes of cis-eQTLs of 10 miRNAs
+dc.dat:		Continuous causal anchors for demonstration purposes, simulated from adding continuous noise to dgmi.dat
+dt.dat:		Expression levels of 1000 genes that have cis-eQTLs
+dt2.dat:	Expression levels of 3000 genes
+dgt.dat:	Haplotypes of cis-eQTLs of 1000 genes
+namest.txt:	3000 gene names
+*.tsv: The same data of *.dat in tsv format
