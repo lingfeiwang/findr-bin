@@ -17,7 +17,7 @@ URL_BIN_REL="$(URL_BIN)/releases"
 URL_R_REL="$(URL_R)/releases"
 VERSION1=1
 VERSION2=0
-VERSION3=3
+VERSION3=5
 LICENSE=AGPL-3
 LICENSE_FULL="GNU Affero General Public License, Version 3"
 LICENSE_URL="https://www.gnu.org/licenses/agpl-3.0"
@@ -73,7 +73,7 @@ distclean: clean
 
 install: SHELL:=/bin/bash
 install: all
-	@umask 0022 && mkdir -p $(DIR_INSTALL_BIN) && \
+	umask 0022 && mkdir -p $(DIR_INSTALL_BIN) && \
 	cp $(BIN_DPRODUCT) $(DIR_INSTALL_BIN)/ && \
 	chmod 0755 $(DIR_INSTALL_BIN)/$(notdir $(BIN_DPRODUCT))
 
@@ -83,10 +83,10 @@ uninstall:
 TMP_FILE=.tmp
 Makefile.flags:
 	# Testing gcc
-	$(CC) --version &> /dev/null || ( echo "GCC not found. Please download the latest GCC or specify its location in CC variable in Makefile."; exit 1; )
+	if ! $(CC) --version > /dev/null 2>&1; then echo "GCC not found. Please download the latest GCC or specify its location in CC variable in Makefile."; exit 1; fi
 	gver=$$($(CC) --version | grep -io gcc) ; \
 	if ! [ -n "$$gver" ]; then echo "Invalid GCC version. Please download the latest GCC."; exit 1; fi
-	@cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -DLIBINFOVERSION1=$(VERSION1) -DLIBINFOVERSION2=$(VERSION2) -DLIBINFOVERSION3=$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I ,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
+	cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -DLIBINFOVERSION1=$(VERSION1) -DLIBINFOVERSION2=$(VERSION2) -DLIBINFOVERSION3=$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I ,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
 	ldflags="$(LDFLAGS) -fopenmp -lm"; \
 	echo "Testing Windows"; \
 	gver=$$($(CC) --version) ; \
@@ -94,13 +94,13 @@ Makefile.flags:
 	t2=$$(echo "$$gver" | grep -io "mingw"); \
 	if ! [ -n "$$t1$$t2" ]; then ldflags="$$ldflags -lc"; fi; \
 	echo "Testing test method"; \
-	$(LD) $$ldflags -lc --shared -o $(TMP_FILE) &> /dev/null || \
-	( echo "Linking with default flags failed."; exit 1; ) ; \
+	if ! $(LD) $$ldflags -lc --shared -o $(TMP_FILE) > /dev/null 2>&1; then \
+	echo "Linking with default flags failed."; exit 1; fi ; \
 	echo "Testing -Wl,--no-as-needed" ; \
-	$(LD) -Wl,--no-as-needed $$ldflags --shared -o $(TMP_FILE) &> /dev/null && \
+	$(LD) -Wl,--no-as-needed $$ldflags --shared -o $(TMP_FILE) > /dev/null 2>&1 && \
 	ldflags="-Wl,--no-as-needed $$ldflags"; \
 	echo "Testing -Wl,-rpath" ; \
-	$(LD) -Wl,-rpath="$$$$ORIGIN" $$ldflags --shared -o $(TMP_FILE) &> /dev/null && \
+	$(LD) -Wl,-rpath="$$$$ORIGIN" $$ldflags --shared -o $(TMP_FILE) > /dev/null 2>&1 && \
 	ldflags="-Wl,-rpath=\""'$$$$'"ORIGIN\" $(addsuffix \",$(addprefix -Wl$(COMMA)-rpath=\",$(DIR_BUILD_LIB))) $$ldflags"; \
 	echo "CFLAGS=$$cflags" > $@ && \
 	echo "LDFLAGS=$$ldflags $(addprefix -L ,$(DIR_BUILD_LIB)) -L . -l$(LIB_NAME) -lgsl -lgslcblas" >> $@
