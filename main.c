@@ -1,4 +1,4 @@
-/* Copyright 2016, 2017 Lingfei Wang
+/* Copyright 2016-2018 Lingfei Wang
  * 
  * This file is part of Findr.
  * 
@@ -58,24 +58,22 @@ int checkversion()
 	if(strcmp(bln,ln))
 	{
 		diff=1;
-		fprintf(stderr,"Error: different names for binary interface and library. Skipped.");
+		fprintf(stderr,"Error: different names for binary interface (%s) and library (%s). Skipped.%s",bln,ln,_NEWLINE_);
 	}
 	if(LIBINFOVERSION1!=lv1)
 	{
 		diff=1;
-		fprintf(stderr,"Error: different major versions for binary interface and library. Skipped.");
+		fprintf(stderr,"Error: different major versions for binary interface (%s) and library (%s). Skipped.%s",blv,lv,_NEWLINE_);
 	}
 	else if(LIBINFOVERSION2!=lv2)
 	{
 		diff=1;
-		fprintf(stderr,"Error: different minor versions for binary interface and library. Skipped.");
+		fprintf(stderr,"Error: different minor versions for binary interface (%s) and library (%s). Skipped.%s",blv,lv,_NEWLINE_);
 	}
 	else if(LIBINFOVERSION3!=lv3)
-		fprintf(stderr,"Warning: different minor versions for binary interface and library. Loaded.");
-
-	fprintf(stderr,"Binary interface for library %s, version %s.%s",bln,blv,_NEWLINE_);
-	if(diff)
-		fprintf(stderr,"Using library name %s, version %s.%s",ln,lv,_NEWLINE_);
+		fprintf(stderr,"Warning: different minor versions for binary interface (%s) and library (%s). Loaded.%s",blv,lv,_NEWLINE_);
+	if(!diff)
+		fprintf(stderr,"Binary interface for library %s, version %s.%s",bln,blv,_NEWLINE_);
 	return diff;
 }
 

@@ -17,11 +17,10 @@ URL_BIN_REL="$(URL_BIN)/releases"
 URL_R_REL="$(URL_R)/releases"
 VERSION1=1
 VERSION2=0
-VERSION3=5
+VERSION3=6
 LICENSE=AGPL-3
 LICENSE_FULL="GNU Affero General Public License, Version 3"
 LICENSE_URL="https://www.gnu.org/licenses/agpl-3.0"
-#UNAME=$$(uname)
 ifdef INCLUDE_MAKEFILE_BEFORE
 #Input package info here
 include $(INCLUDE_MAKEFILE_BEFORE)
@@ -87,12 +86,7 @@ Makefile.flags:
 	gver=$$($(CC) --version | grep -io gcc) ; \
 	if ! [ -n "$$gver" ]; then echo "Invalid GCC version. Please download the latest GCC."; exit 1; fi
 	cflags="$(CFLAGS) $(CFLAGS_EXTRA) -DLIBINFONAME=$(LIB_NAME) -DLIBINFOVERSION=$(VERSION1).$(VERSION2).$(VERSION3) -DLIBINFOVERSION1=$(VERSION1) -DLIBINFOVERSION2=$(VERSION2) -DLIBINFOVERSION3=$(VERSION3) -fopenmp -ggdb -fPIC -Wall -Wextra -Wconversion -Wsign-conversion -Wundef -Wendif-labels -std=c99 -pedantic-errors $(addprefix -I ,$(DIR_BUILD_INC)) $(OPTFLAGS)" ; \
-	ldflags="$(LDFLAGS) -fopenmp -lm"; \
-	echo "Testing Windows"; \
-	gver=$$($(CC) --version) ; \
-	t1=$$(echo "$$gver" | grep -io "MSYS2"); \
-	t2=$$(echo "$$gver" | grep -io "mingw"); \
-	if ! [ -n "$$t1$$t2" ]; then ldflags="$$ldflags -lc"; fi; \
+	ldflags="$(LDFLAGS) -fopenmp -lm -lc"; \
 	echo "Testing test method"; \
 	if ! $(LD) $$ldflags -lc --shared -o $(TMP_FILE) > /dev/null 2>&1; then \
 	echo "Linking with default flags failed."; exit 1; fi ; \
@@ -103,7 +97,7 @@ Makefile.flags:
 	$(LD) -Wl,-rpath="$$$$ORIGIN" $$ldflags --shared -o $(TMP_FILE) > /dev/null 2>&1 && \
 	ldflags="-Wl,-rpath=\""'$$$$'"ORIGIN\" $(addsuffix \",$(addprefix -Wl$(COMMA)-rpath=\",$(DIR_BUILD_LIB))) $$ldflags"; \
 	echo "CFLAGS=$$cflags" > $@ && \
-	echo "LDFLAGS=$$ldflags $(addprefix -L ,$(DIR_BUILD_LIB)) -L . -l$(LIB_NAME) -lgsl -lgslcblas" >> $@
+	echo "LDFLAGS=$$ldflags $(addprefix -L ,$(DIR_BUILD_LIB)) -L . -l$(LIB_NAME) -lgsl" >> $@
 	$(RM) $(TMP_FILE)
 
 ifdef INCLUDE_MAKEFILE_AFTER
