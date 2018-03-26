@@ -15,23 +15,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Findr.  If not, see <http://www.gnu.org/licenses/>.
  */
-#define	ENABLE_PV
-#define	ENABLE_CASSIST
-#define	ENABLE_NETR
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <base/logger.h>
 #include <base/os.h>
 #include <pij/gassist/gassist.h>
-#ifdef	ENABLE_CASSIST
 #include <pij/cassist/cassist.h>
-#endif
 #include <pij/rank.h>
-#ifdef	ENABLE_NETR
 #include <netr/one.h>
-#endif
 #include <base/random.h>
 #include <base/macros.h>
 #include <base/lib.h>
@@ -93,6 +85,7 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp," Pairwise regulation probability (local precision) estimation%s",_NEWLINE_);
 	fprintf(fp,"**************************************************************%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
+	
 	fprintf(fp,"pij_gassist: invokes function pij_gassist in library and provides recommended causal inference of regulatory relations. \"gassist\" functions use discrete data as instrumental variable.%s",_NEWLINE_);
 	fprintf(fp,"pij_gassist_trad: invokes function pij_gassist_trad in library and performs traditional causal inference test. WARNING: This is not and is not intended as a loyal reimplementation of Trigger R package.%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth pij_gassist fg ft ft2 nt nt2 ns fp na nodiag memlimit%s",binpath,_NEWLINE_);
@@ -109,6 +102,7 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
+	
 	fprintf(fp,"pijs_gassist: invokes function pijs_gassist in library and performs five tests for causal inference test to estimate probabilities (local precisions) of pairwise regulation A->B with genotype information%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth pijs_gassist fg ft ft2 nt nt2 ns fp1 fp2 fp3 fp4 fp5 na nodiag memlimit%s",binpath,_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
@@ -127,7 +121,7 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-#ifdef ENABLE_CASSIST
+	
 	fprintf(fp,"pij_cassist: invokes function pij_cassist in library and provides recommended causal inference of regulatory relations. \"cassist\" functions use continuous data as instrumental variable.%s",_NEWLINE_);
 	fprintf(fp,"pij_cassist_trad: invokes function pij_cassist_trad in library and performs traditional causal inference test.%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth pij_cassist fc ft ft2 nt nt2 ns fp nodiag memlimit%s",binpath,_NEWLINE_);
@@ -143,6 +137,7 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
+	
 	fprintf(fp,"pijs_cassist: invokes function pijs_cassist in library and performs five tests for causal inference test to estimate probabilities (local precisions) of pairwise regulation A->B with continuous anchor information%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth pijs_cassist fc ft ft2 nt nt2 ns fp1 fp2 fp3 fp4 fp5 nodiag memlimit%s",binpath,_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
@@ -160,7 +155,7 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-#endif
+
 	fprintf(fp,"pij_rank: invokes function pij_rank in library to estimate probability (local precision) of pairwise correlation A--B with only pairwise expression data%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth pij_rank ft ft2 nt nt2 ns fp nodiag memlimit%s",binpath, _NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
@@ -173,11 +168,12 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tnodiag:\tWhether diagonal elements of output probability matrices should be neglected (due to identical A,B)%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage. %s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-#ifdef ENABLE_PV
+	
 	fprintf(fp,"**************************************************************%s",_NEWLINE_);
 	fprintf(fp," Pairwise regulation p-value estimation%s",_NEWLINE_);
 	fprintf(fp,"**************************************************************%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
+	
 	fprintf(fp,"pijs_gassist_pv: invokes function pijs_gassist_pv in library and performs five tests for causal inference test to estimate p-values of pairwise regulation A->B with genotype information%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth pijs_gassist_pv fg ft ft2 nt nt2 ns fp1 fp2 fp3 fp4 fp5 na memlimit%s",binpath,_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
@@ -195,7 +191,7 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tna:\tNumber of allleles for the species considered.%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-#ifdef ENABLE_CASSIST
+	
 	fprintf(fp,"pijs_cassist_pv: invokes function pijs_cassist_pv in library and performs five tests for causal inference test to estimate p-values of pairwise regulation A->B with continuous anchor information%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth pijs_cassist_pv fc ft ft2 nt nt2 ns fp1 fp2 fp3 fp4 fp5 memlimit%s",binpath,_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
@@ -212,7 +208,7 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tfp5:\tPath of output file for p-value of LLR of test 5, E->A->B with E->B (alt) v.s. A<-E->B (null). Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-#endif
+
 	fprintf(fp,"pij_rank_pv: invokes function pij_rank_pv in library to estimate p-value of pairwise correlation A--B with only pairwise expression data%s",_NEWLINE_);
 	fprintf(fp,"Null hypothesis: no correlation. Alternative hypothesis: allows correlation%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth pij_rank_pv ft ft2 nt nt2 ns fp memlimit%s",binpath, _NEWLINE_);
@@ -225,12 +221,12 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tfp:\tPath of output file for p-value of LLR. Data matrix size: (nt,nt2).%s",_NEWLINE_);
 	fprintf(fp,"\tmemlimit:\tThe approximate memory usage limit in bytes for the library.  For datasets require a larger memory, calculation will be split into smaller chunks. If the memory limit is smaller than minimum required, calculation can fail with an error message. memlimit=0 defaults to unlimited memory usage. %s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-#endif
-#ifdef ENABLE_NETR
+	
 	fprintf(fp,"**************************************************************%s",_NEWLINE_);
 	fprintf(fp," Reconstruction of directed acyclic graph from prior information%s",_NEWLINE_);
 	fprintf(fp,"**************************************************************%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
+	
 	fprintf(fp,"netr_one_greedy: invokes function netr_one_greedy in library and reconstructs directed acyclic graph by adding one most significant edge at a time while avoiding cycles, according to the prior information on edge significance.%s",_NEWLINE_);
 	fprintf(fp,"Usage: %s loglv rs nth netr_one_greedy fprior nt fnet namax nimax nomax%s",binpath,_NEWLINE_);
 	fprintf(fp,"Method arguments:%s",_NEWLINE_);
@@ -241,11 +237,12 @@ void usage(FILE* fp,const char* binpath)
 	fprintf(fp,"\tnimax:\tThe maximum number of incoming edges for each node. Default 0 indicates unlimited.%s",_NEWLINE_);
 	fprintf(fp,"\tnomax:\tThe maximum number of outgoing edges for each node. Default 0 indicates unlimited.%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
-#endif
+
 	fprintf(fp,"**************************************************************%s",_NEWLINE_);
 	fprintf(fp," File formats:%s",_NEWLINE_);
 	fprintf(fp,"**************************************************************%s",_NEWLINE_);
 	fprintf(fp,"%s",_NEWLINE_);
+	
 	fprintf(fp,"This binary interface accepts two input/output file formats: raw and tsv. Within each run, all input and output files must all have the same format, either raw or tsv. This is indicated from the method name. Normal method names indicate raw file format, and appending the method name with '_tsv' would indicate tsv file format.%s",_NEWLINE_);
 	fprintf(fp,"\tRaw format: for matrices, row-major sequence is used. All genotype data follow type 'GTYPE', and all expression data and output probabilities follow type 'FTYPE'. Detailed definitions of GTYPE and FTYPE can be found in base/types.h in source tree. By default, GTYPE is 8-bit (1-byte) unsigned char, FTYPE is 32-bit (4-byte) signed float in native endianness.%s",_NEWLINE_);
 	fprintf(fp,"\tTsv format: tab separated value files. Each row should be separated by new line, and each column by tab or space. The number of rows and columns must match input dimensional parameters.%s",_NEWLINE_);
@@ -616,6 +613,7 @@ int bin_pij_rank_func(int argc,const char* argv[],int (*fin_fm)(const char[],MAT
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
+	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	t=MATRIXFF(alloc)(ng,ns);
@@ -697,6 +695,7 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
+	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXGF(alloc)(ng,ns);
@@ -807,6 +806,7 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*fin_gm)(const char[]
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
+	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXGF(alloc)(ng,ns);
@@ -871,7 +871,6 @@ static inline int bin_pijs_gassist_tsv(int argc,const char* argv[])
 	return bin_pijs_gassist_func(argc,argv,bin_matrixgi_tsv,bin_matrixfi_tsv,bin_vectorfo_tsv,bin_matrixfo_tsv);
 }
 
-#ifdef	ENABLE_CASSIST
 //pijs_cassist generic function, for pijs_cassist, for raw and tsv versions
 int bin_pijs_cassist_func(int argc,const char* argv[],int (*fin_fm)(const char[],MATRIXF*),int (*fout_fv)(const char[],const VECTORF*),int (*fout_fm)(const char[],const MATRIXF*))
 {
@@ -916,6 +915,7 @@ int bin_pijs_cassist_func(int argc,const char* argv[],int (*fin_fm)(const char[]
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
+	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXFF(alloc)(ng,ns);
@@ -1010,6 +1010,7 @@ int bin_pij_cassist_func(int argc,const char* argv[],int (*func)(const MATRIXF*,
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
+	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXFF(alloc)(ng,ns);
@@ -1064,9 +1065,7 @@ static inline int bin_pij_cassist_trad_tsv(int argc,const char* argv[])
 {
 	return bin_pij_cassist_func(argc,argv,pij_cassist_trad,bin_matrixfi_tsv,bin_matrixfo_tsv);
 }
-#endif
 
-#ifdef ENABLE_PV
 //pij_rank_pv generic function, for raw and tsv versions
 static int bin_pij_rank_pv_func(int argc,const char* argv[],int (*fin_fm)(const char[],MATRIXF*),int (*fout_fm)(const char[],const MATRIXF*))
 {
@@ -1097,6 +1096,7 @@ static int bin_pij_rank_pv_func(int argc,const char* argv[],int (*fin_fm)(const 
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
+	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	t=MATRIXFF(alloc)(ng,ns);
@@ -1177,6 +1177,7 @@ int bin_pijs_gassist_pv_func(int argc,const char* argv[],int (*fin_gm)(const cha
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
+	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXGF(alloc)(ng,ns);
@@ -1241,7 +1242,6 @@ static inline int bin_pijs_gassist_pv_tsv(int argc,const char* argv[])
 	return bin_pijs_gassist_pv_func(argc,argv,bin_matrixgi_tsv,bin_matrixfi_tsv,bin_vectorfo_tsv,bin_matrixfo_tsv);
 }
 
-#ifdef ENABLE_CASSIST
 //pijs_cassist_pv generic function, for pijs_cassist_pv, for raw and tsv versions
 int bin_pijs_cassist_pv_func(int argc,const char* argv[],int (*fin_fm)(const char[],MATRIXF*),int (*fout_fv)(const char[],const VECTORF*),int (*fout_fm)(const char[],const MATRIXF*))
 {
@@ -1279,6 +1279,7 @@ int bin_pijs_cassist_pv_func(int argc,const char* argv[],int (*fin_fm)(const cha
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
+	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXFF(alloc)(ng,ns);
@@ -1335,10 +1336,6 @@ static inline int bin_pijs_cassist_pv_tsv(int argc,const char* argv[])
 	return bin_pijs_cassist_pv_func(argc,argv,bin_matrixfi_tsv,bin_vectorfo_tsv,bin_matrixfo_tsv);
 }
 
-#endif
-#endif
-
-#ifdef ENABLE_NETR
 //netr_one_greedy generic function, for raw and tsv versions
 int bin_netr_one_greedy_func(int argc,const char* argv[],int (*fin_fm)(const char[],MATRIXF*),int (*fout_fm)(const char[],const MATRIXUC*))
 {
@@ -1420,13 +1417,12 @@ static inline int bin_netr_one_greedy_tsv(int argc,const char* argv[])
 	return bin_netr_one_greedy_func(argc,argv,bin_matrixfi_tsv,bin_matrixuco_tsv);
 }
 
-#endif
 
 int main(int argc,const char* argv[])
 {
 #define	GETFUNCNAMERAW(X)	if(!strcmp(argv[4],STR(X))) func=bin_##X;
 #define	GETFUNCNAMETSV(X)	if(!strcmp(argv[4],STR(X)"_tsv")) func=bin_##X##_tsv;
-#define	GETFUNCNAMECSV(X)	if(!strcmp(argv[4],STR(X)"_csv")) func=bin_##X##_tsv;
+#define	GETFUNCNAMECSV(X)	if(!strcmp(argv[4],STR(X)"_csv")) {func=bin_##X##_tsv; LOG(6,"Deprecation: the '_csv' suffix will be deprecated from version 2.x.x.")}
 #define	GETFUNCNAMES(X)		GETFUNCNAMERAW(X) else GETFUNCNAMETSV(X) \
 							else GETFUNCNAMECSV(X)
 	int	ret;
@@ -1441,22 +1437,14 @@ int main(int argc,const char* argv[])
 		GETFUNCNAMES(pijs_gassist)
 		else GETFUNCNAMES(pij_gassist)
 		else GETFUNCNAMES(pij_gassist_trad)
-#ifdef ENABLE_CASSIST
 		else GETFUNCNAMES(pijs_cassist)
 		else GETFUNCNAMES(pij_cassist)
 		else GETFUNCNAMES(pij_cassist_trad)
-#endif
 		else GETFUNCNAMES(pij_rank)
-#ifdef ENABLE_PV
 		else GETFUNCNAMES(pijs_gassist_pv)
-	#ifdef ENABLE_CASSIST
 		else GETFUNCNAMES(pijs_cassist_pv)
-	#endif
 		else GETFUNCNAMES(pij_rank_pv)
-#endif
-#ifdef ENABLE_NETR
 		else GETFUNCNAMES(netr_one_greedy)
-#endif
 	}
 	//If method name not found
 	if(!func)
