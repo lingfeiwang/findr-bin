@@ -1,4 +1,4 @@
-/* Copyright 2016-2018 Lingfei Wang
+/* Copyright 2016-2018, 2020 Lingfei Wang
  * 
  * This file is part of Findr.
  * 
@@ -613,7 +613,6 @@ int bin_pij_rank_func(int argc,const char* argv[],int (*fin_fm)(const char[],MAT
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
-	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	t=MATRIXFF(alloc)(ng,ns);
@@ -695,7 +694,6 @@ int bin_pij_gassist_func(int argc,const char* argv[],int (*func)(const MATRIXG*,
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
-	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXGF(alloc)(ng,ns);
@@ -806,7 +804,6 @@ int bin_pijs_gassist_func(int argc,const char* argv[],int (*fin_gm)(const char[]
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
-	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXGF(alloc)(ng,ns);
@@ -915,7 +912,6 @@ int bin_pijs_cassist_func(int argc,const char* argv[],int (*fin_fm)(const char[]
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
-	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXFF(alloc)(ng,ns);
@@ -1010,7 +1006,6 @@ int bin_pij_cassist_func(int argc,const char* argv[],int (*func)(const MATRIXF*,
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
-	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXFF(alloc)(ng,ns);
@@ -1096,7 +1091,6 @@ static int bin_pij_rank_pv_func(int argc,const char* argv[],int (*fin_fm)(const 
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
-	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	t=MATRIXFF(alloc)(ng,ns);
@@ -1177,7 +1171,6 @@ int bin_pijs_gassist_pv_func(int argc,const char* argv[],int (*fin_gm)(const cha
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
-	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXGF(alloc)(ng,ns);
@@ -1279,7 +1272,6 @@ int bin_pijs_cassist_pv_func(int argc,const char* argv[],int (*fin_fm)(const cha
 	if(!memlimit)
 		memlimit=(size_t)-1;
 	LOG(8,"%s started.",funcname)
-	LOG(6,"Compatibility: From version 2.x.x, the current parameter format of this function will be updated to account for (possible) covariates/surrogate variables.")
 	
 	//Memory allocation
 	g=MATRIXFF(alloc)(ng,ns);
@@ -1422,7 +1414,7 @@ int main(int argc,const char* argv[])
 {
 #define	GETFUNCNAMERAW(X)	if(!strcmp(argv[4],STR(X))) func=bin_##X;
 #define	GETFUNCNAMETSV(X)	if(!strcmp(argv[4],STR(X)"_tsv")) func=bin_##X##_tsv;
-#define	GETFUNCNAMECSV(X)	if(!strcmp(argv[4],STR(X)"_csv")) {func=bin_##X##_tsv; LOG(6,"Deprecation: the '_csv' suffix will be deprecated from version 2.x.x.")}
+#define	GETFUNCNAMECSV(X)	if(!strcmp(argv[4],STR(X)"_csv")) func=bin_##X##_tsv;
 #define	GETFUNCNAMES(X)		GETFUNCNAMERAW(X) else GETFUNCNAMETSV(X) \
 							else GETFUNCNAMECSV(X)
 	int	ret;
@@ -1459,37 +1451,3 @@ int main(int argc,const char* argv[])
 }
 #undef	GETFUNCNAME
 #undef	LIBINFO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
